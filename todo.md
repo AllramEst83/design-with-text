@@ -1,3 +1,3 @@
 
-- [] Add refresh button to each specific source.
-- [] When the app loads initally, register a refersh sources job that refreshes automatically every day at 06:00. If that time has passed. The job should run. 
+[ ] Add a refresh button to each source.
+[ ] When the app initially loads, register a job to refresh sources automatically every day at 06:00. If that time has already passed, the job should run immediately.

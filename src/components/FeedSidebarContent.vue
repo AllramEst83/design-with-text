@@ -61,7 +61,7 @@ const emit = defineEmits<{
         </p>
       </div>
     </div>
-    <div class="shrink-0 space-y-3 border-t border-outline/15 p-5">
+    <div class="hidden shrink-0 space-y-3 border-t border-outline/15 p-5 lg:block">
       <button
         type="button"
         class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface disabled:cursor-not-allowed disabled:text-secondary/50"
