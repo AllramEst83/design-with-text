@@ -11,15 +11,16 @@ defineProps<{
 const emit = defineEmits<{
   add: [url: string]
   remove: [url: string]
+  openSettings: []
 }>()
 </script>
 
 <template>
   <div class="rule-column flex h-full w-full flex-col overflow-y-auto p-5">
     <FeedInput :loading="loading" :error="error" @add="(url) => emit('add', url)" />
-    
+
     <div style="margin: 1.0rem 0; height: 1px; width: 100%; background-color: currentColor; opacity: 0.15; flex-shrink: 0;"></div>
-    
+
     <div class="space-y-6">
       <div>
         <h2 class="font-label text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -29,7 +30,7 @@ const emit = defineEmits<{
           Feeds you have added
         </p>
       </div>
-      
+
       <ul v-if="loadedFeeds.length > 0" class="space-y-6">
         <li
           v-for="feed in loadedFeeds"
@@ -46,7 +47,7 @@ const emit = defineEmits<{
           </div>
           <button
             type="button"
-            class="font-label shrink-0 text-[9px] uppercase tracking-widest text-secondary/60 underline decoration-1 underline-offset-2 transition-colors hover:text-error"
+            class="font-label shrink-0 cursor-pointer text-[9px] uppercase tracking-widest text-secondary/60 underline decoration-1 underline-offset-2 transition-colors hover:text-error"
             @click="emit('remove', feed.url)"
           >
             Remove
@@ -56,6 +57,16 @@ const emit = defineEmits<{
       <p v-else class="font-label text-[10px] text-secondary">
         No feeds added yet.
       </p>
+    </div>
+
+    <div class="mt-auto pt-6">
+      <button
+        type="button"
+        class="font-label text-[10px] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2 transition-colors hover:text-primary-container"
+        @click="emit('openSettings')"
+      >
+        Settings
+      </button>
     </div>
   </div>
 </template>

@@ -49,7 +49,9 @@ function mapItem(
   return {
     id: itemId(feedUrl, raw, index),
     title: (raw.title && raw.title.trim()) || 'Untitled',
-    link: raw.link?.trim() || '#',
+    link:
+      raw.link?.trim() ||
+      (typeof raw.guid === 'string' && /^https?:\/\//.test(raw.guid) ? raw.guid : '#'),
     pubDate: raw.pubDate || raw.isoDate,
     excerpt,
     contentHtml,

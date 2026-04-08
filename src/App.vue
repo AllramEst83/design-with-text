@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
+import AppSettingsPanel from '@/components/AppSettingsPanel.vue'
 import FeedList from '@/components/FeedList.vue'
 import FeedSidebarContent from '@/components/FeedSidebarContent.vue'
 import FeedSourceFilter from '@/components/FeedSourceFilter.vue'
@@ -21,8 +22,16 @@ const readerOpen = ref(false)
 const isDesktop = ref(false)
 const isDesktopSidebarCollapsed = ref(false)
 const isMobileSidebarOpen = ref(false)
+const isSettingsOpen = ref(false)
+const appFontScale = ref(100)
+const appTextRoot = ref<HTMLElement | null>(null)
+const mobileSidebarRoot = ref<HTMLElement | null>(null)
+
+const APP_FONT_SCALE_KEY = 'app-font-scale'
 
 let viewportQuery: MediaQueryList | null = null
+let appTextObserver: MutationObserver | null = null
+let mobileTextObserver: MutationObserver | null = null
 
 function syncViewport(query: MediaQueryList | MediaQueryListEvent) {
   isDesktop.value = query.matches
@@ -59,19 +68,82 @@ function closeMobileSidebar() {
   isMobileSidebarOpen.value = false
 }
 
+function openSettings() {
+  isSettingsOpen.value = true
+  isMobileSidebarOpen.value = false
+}
+
+function applyTextScale(root: HTMLElement | null) {
+  if (!root) return
+  const scaleFactor = appFontScale.value / 100
+  const targets = [root, ...Array.from(root.querySelectorAll<HTMLElement>('*'))]
+  for (const el of targets) {
+    if (el.classList.contains('material-symbols-outlined')) continue
+    const currentPx = Number.parseFloat(window.getComputedStyle(el).fontSize)
+    if (!Number.isFinite(currentPx) || currentPx <= 0) continue
+    if (!el.dataset.appBaseFontPx) {
+      // If we're already scaled, normalize back to baseline before storing.
+      el.dataset.appBaseFontPx = String(currentPx / scaleFactor)
+    }
+    const basePx = Number.parseFloat(el.dataset.appBaseFontPx)
+    if (!Number.isFinite(basePx) || basePx <= 0) continue
+    el.style.fontSize = `${basePx * scaleFactor}px`
+  }
+}
+
+function startTextScaleObserver(
+  root: HTMLElement | null,
+  assignObserver: (observer: MutationObserver) => void,
+) {
+  if (!root) return
+  applyTextScale(root)
+  const observer = new MutationObserver(() => {
+    applyTextScale(root)
+  })
+  observer.observe(root, { childList: true, subtree: true })
+  assignObserver(observer)
+}
+
 onMounted(() => {
+  const persistedScale = window.localStorage.getItem(APP_FONT_SCALE_KEY)
+  const parsedScale = Number(persistedScale)
+  if (Number.isFinite(parsedScale) && parsedScale >= 85 && parsedScale <= 125) {
+    appFontScale.value = parsedScale
+  }
   viewportQuery = window.matchMedia('(min-width: 1024px)')
   syncViewport(viewportQuery)
   viewportQuery.addEventListener('change', syncViewport)
+  startTextScaleObserver(appTextRoot.value, (observer) => {
+    appTextObserver = observer
+  })
+})
+
+watch(appFontScale, (scale) => {
+  window.localStorage.setItem(APP_FONT_SCALE_KEY, String(scale))
+  applyTextScale(appTextRoot.value)
+  applyTextScale(mobileSidebarRoot.value)
+})
+
+watch(isMobileSidebarOpen, (isOpen) => {
+  if (!isOpen) return
+  if (mobileTextObserver) {
+    mobileTextObserver.disconnect()
+    mobileTextObserver = null
+  }
+  startTextScaleObserver(mobileSidebarRoot.value, (observer) => {
+    mobileTextObserver = observer
+  })
 })
 
 onUnmounted(() => {
   viewportQuery?.removeEventListener('change', syncViewport)
+  appTextObserver?.disconnect()
+  mobileTextObserver?.disconnect()
 })
 </script>
 
 <template>
-  <div class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
+  <div ref="appTextRoot" class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
     <header class="shrink-0 border-b-2 border-primary bg-surface px-6 py-5 md:px-10">
       <div
         class="mx-auto flex w-full flex-col gap-3 md:flex-row md:items-end md:justify-between"
@@ -126,6 +198,7 @@ onUnmounted(() => {
             :error="error"
             @add="onAddFeed"
             @remove="removeFeed"
+            @open-settings="openSettings"
           />
         </template>
       </aside>
@@ -170,10 +243,12 @@ onUnmounted(() => {
     </footer>
 
     <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" />
+    <AppSettingsPanel v-model="isSettingsOpen" v-model:font-scale="appFontScale" />
 
     <Teleport to="body">
       <div
         v-if="isMobileSidebarOpen"
+        ref="mobileSidebarRoot"
         class="fixed inset-0 z-40 flex lg:hidden"
         role="dialog"
         aria-modal="true"
@@ -197,6 +272,7 @@ onUnmounted(() => {
             :error="error"
             @add="onAddFeed"
             @remove="removeFeed"
+            @open-settings="openSettings"
           />
         </aside>
       </div>

@@ -74,6 +74,12 @@ const safeHtml = computed(() =>
   }),
 )
 
+const originalHref = computed(() => {
+  const href = props.item.link?.trim()
+  if (!href || href === '#') return null
+  return href
+})
+
 function onSettingsUpdate(s: ReaderSettings) {
   Object.assign(settings.value, s)
 }
@@ -116,8 +122,9 @@ function onSettingsUpdate(s: ReaderSettings) {
           </div>
           <div class="flex shrink-0 gap-2">
             <a
+              v-if="originalHref"
               class="news-link font-label text-xs font-bold text-[var(--reader-link)]"
-              :href="item.link"
+              :href="originalHref"
               target="_blank"
               rel="noopener noreferrer"
             >
