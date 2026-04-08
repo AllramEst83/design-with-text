@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue'
+import type { ComponentPublicInstance, VNodeRef } from 'vue'
 
 import { usePretextFeedLayout } from '@/composables/usePretextFeedLayout'
 import type { FeedItem } from '@/types/rss'
@@ -53,9 +54,10 @@ watch(heights, () => {
   virtualizer.value.measure()
 }, { deep: true })
 
-function measureRow(el: Element | null) {
-  if (!el) return
-  virtualizer.value.measureElement(el)
+const measureRow: VNodeRef = (node) => {
+  if (!node) return
+  if (!(node instanceof Element)) return
+  virtualizer.value.measureElement(node)
 }
 </script>
 
