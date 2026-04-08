@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hypertext Gazette | The Digital Archivist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Public+Sans:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#09006b",
+                    "secondary-fixed": "#f3e0c0",
+                    "tertiary-fixed": "#ffdea5",
+                    "inverse-on-surface": "#f2f1eb",
+                    "surface": "#faf9f3",
+                    "on-tertiary-fixed": "#261900",
+                    "surface-tint": "#4b4bd4",
+                    "tertiary": "#775a19",
+                    "outline-variant": "#cfc5b8",
+                    "on-surface": "#1b1c19",
+                    "surface-container-highest": "#e3e3dd",
+                    "on-error": "#ffffff",
+                    "secondary": "#6a5d43",
+                    "on-secondary-container": "#6e6147",
+                    "surface-container": "#efeee8",
+                    "secondary-fixed-dim": "#d6c4a5",
+                    "surface-variant": "#e3e3dd",
+                    "on-secondary-fixed": "#231a06",
+                    "on-background": "#1b1c19",
+                    "inverse-primary": "#c1c1ff",
+                    "surface-container-low": "#f5f4ee",
+                    "on-surface-variant": "#4c463c",
+                    "on-secondary-fixed-variant": "#51452d",
+                    "on-tertiary-container": "#664a08",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#4b4bd4",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "on-primary-fixed-variant": "#312ebc",
+                    "primary-container": "#babbff",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "surface-dim": "#dbdad4",
+                    "inverse-surface": "#30312d",
+                    "secondary-container": "#f0debd",
+                    "surface-bright": "#faf9f3",
+                    "background": "#faf9f3",
+                    "on-primary-container": "#3a38c4",
+                    "outline": "#7e766b",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#e3bb71",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#e1dfff",
+                    "surface-container-high": "#e9e8e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader"],
+                    "body": ["Newsreader"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Newsreader', serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .newspaper-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; }
+        .rule-column { border-right: 1px solid rgba(126, 118, 107, 0.1); }
+        .news-link { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-[#faf9f3] dark:bg-stone-950 border-b-2 border-[#4b4bd4] dark:border-[#babbff]">
+<div class="flex flex-col items-center w-full px-6 max-w-screen-2xl mx-auto py-4">
+<div class="w-full flex justify-between items-center font-label text-[10px] tracking-widest uppercase text-secondary pb-4">
+<span>Volume LXXII — No. 402</span>
+<span class="font-bold">Wednesday, October 23, 2024</span>
+<span>London · New York · Tokyo</span>
+</div>
+<h1 class="text-5xl font-black uppercase text-[#4b4bd4] dark:text-[#babbff] border-y-4 border-[#4b4bd4] py-2 my-4 font-headline tracking-tight text-center w-full">
+                Hypertext Gazette
+            </h1>
+<nav class="flex gap-8 py-4 font-serif newsreader tracking-tight items-center">
+<a class="text-[#4b4bd4] dark:text-[#babbff] font-bold underline underline-offset-4 decoration-2 cursor-pointer transition-colors duration-150 hover:text-blue-800" href="#">Dispatch</a>
+<a class="text-stone-700 dark:text-stone-300 font-medium cursor-pointer transition-colors duration-150 hover:text-blue-800 dark:hover:text-blue-400 hover:underline" href="#">Opinion</a>
+<a class="text-stone-700 dark:text-stone-300 font-medium cursor-pointer transition-colors duration-150 hover:text-blue-800 dark:hover:text-blue-400 hover:underline" href="#">Archive</a>
+<a class="text-stone-700 dark:text-stone-300 font-medium cursor-pointer transition-colors duration-150 hover:text-blue-800 dark:hover:text-blue-400 hover:underline" href="#">Gazetteer</a>
+<div class="ml-4 pl-4 border-l border-outline/20">
+<span class="material-symbols-outlined text-primary cursor-pointer">account_circle</span>
+</div>
+</nav>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-6 py-12">
+<div class="newspaper-grid">
+<!-- Left Sidebar: Archive & Directory -->
+<aside class="col-span-12 md:col-span-3 rule-column pr-8 hidden md:block bg-surface-container-low p-6 h-fit">
+<div class="mb-12">
+<h2 class="font-label text-xs tracking-wider uppercase text-primary font-bold mb-6">The Directory</h2>
+<p class="font-label text-[10px] text-secondary mb-8">Established 1994</p>
+<ul class="space-y-6">
+<li class="flex items-center gap-3 transition-transform active:scale-95 cursor-pointer group">
+<span class="material-symbols-outlined text-primary">newspaper</span>
+<span class="font-label text-xs tracking-wider uppercase text-primary border-b border-[#4b4bd4]">Current Edition</span>
+</li>
+<li class="flex items-center gap-3 transition-transform active:scale-95 cursor-pointer group">
+<span class="material-symbols-outlined text-secondary">assignment_late</span>
+<span class="font-label text-xs tracking-wider uppercase text-stone-600 hover:text-primary">Special Reports</span>
+</li>
+<li class="flex items-center gap-3 transition-transform active:scale-95 cursor-pointer group">
+<span class="material-symbols-outlined text-secondary">list_alt</span>
+<span class="font-label text-xs tracking-wider uppercase text-stone-600 hover:text-primary">Classifieds</span>
+</li>
+<li class="flex items-center gap-3 transition-transform active:scale-95 cursor-pointer group">
+<span class="material-symbols-outlined text-secondary">mail</span>
+<span class="font-label text-xs tracking-wider uppercase text-stone-600 hover:text-primary">Letters</span>
+</li>
+<li class="flex items-center gap-3 transition-transform active:scale-95 cursor-pointer group">
+<span class="material-symbols-outlined text-secondary">folder_shared</span>
+<span class="font-label text-xs tracking-wider uppercase text-stone-600 hover:text-primary">Directory</span>
+</li>
+</ul>
+<button class="w-full mt-12 bg-primary text-on-primary py-3 font-label text-xs tracking-widest uppercase font-bold hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                        Subscribe Now
+                    </button>
+</div>
+<div class="pt-12 border-t border-outline/10">
+<h3 class="font-headline text-lg italic mb-4">The Archive Tip</h3>
+<p class="font-body text-sm leading-relaxed italic text-secondary">
+                        "Memory is the diary that we all carry about with us."
+                    </p>
+</div>
+</aside>
+<!-- Center Content: Main Stories -->
+<article class="col-span-12 md:col-span-6">
+<!-- Lead Story -->
+<div class="mb-16">
+<div class="flex items-center gap-2 mb-4">
+<span class="font-label text-[10px] font-bold bg-primary text-on-primary px-2 py-0.5">TOP DISPATCH</span>
+<span class="font-label text-[10px] text-secondary">14 MIN READ</span>
+</div>
+<h2 class="text-5xl font-headline font-bold leading-none mb-6 tracking-tight">
+                        The Architectonics of Digital Silence: A Post-Web Manifesto
+                    </h2>
+<p class="font-body text-xl leading-relaxed text-on-surface mb-8">
+                        As the noise of the algorithm intensifies, a new generation of creators is retreating to the "Small Web"—a sanctuary of static pages, hand-coded journals, and the profound beauty of intentional friction.
+                    </p>
+<div class="w-full h-[400px] bg-surface-container-highest mb-6 overflow-hidden">
+<img class="w-full h-full object-cover grayscale opacity-80 mix-blend-multiply" data-alt="Minimalist desk with an old typewriter and a modern e-ink tablet, soft morning light through a nearby window, archival aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW5URw28o1KRaUhcXHH5G01rS5PPSZedRsOzZiMNxZBexx-KCQYW0NR05z1zUpBL6RIUfZbNpldQtzTDyMOSR6IoSmIkWVl4bkTTo90O5z2N1C5OfvHtIcZlZk0k8LsnovYv7XyVzH9olnuMY3V0AK9W6vXPxCQifzNd7UyWbf8IsyDhUz8z4hq3a2itzZ8FaMZ1q8z9Mjen6EaONG1RePE9A15Rgj_0RT5Q9kTTwPYIHv4TXVxNhG6AZ9I0nntacwy2TvL7RjiGT_"/>
+</div>
+<p class="font-body text-lg leading-relaxed text-secondary mb-4 line-height-[1.6]">
+                        London — In the basement of an old print shop in Clerkenwell, Julian Thorne is typesetting a revolutionary document. It’s not a pamphlet for a political party, nor an underground zine. It is a technical specification for a decentralized protocol that aims to make the internet "slower, harder, and more permanent."
+                    </p>
+<a class="news-link text-primary font-bold" href="#">Continue reading the Manifesto →</a>
+</div>
+<!-- Secondary Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 border-t-2 border-secondary/20 pt-12">
+<div>
+<h3 class="font-headline text-2xl font-bold mb-4">The Death of the Scroll</h3>
+<p class="font-body text-base text-secondary leading-relaxed mb-4">
+                            Why pagination is returning as the ultimate luxury interface for the focused mind.
+                        </p>
+<a class="news-link text-primary font-bold text-sm" href="#">Read dispatch</a>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold mb-4">Inked Memories</h3>
+<p class="font-body text-base text-secondary leading-relaxed mb-4">
+                            The resurgence of pen-plotter art in an era of generative hallucinations.
+                        </p>
+<a class="news-link text-primary font-bold text-sm" href="#">Read dispatch</a>
+</div>
+</div>
+</article>
+<!-- Right Sidebar: Opinion & Features -->
+<aside class="col-span-12 md:col-span-3 space-y-12">
+<div class="bg-surface-dim p-6">
+<h2 class="font-label text-xs tracking-wider uppercase text-primary font-bold mb-6">Opinion</h2>
+<div class="space-y-8">
+<div class="group cursor-pointer">
+<p class="font-label text-[10px] text-secondary mb-2">BY ELARA VANCE</p>
+<h4 class="font-headline text-xl font-bold group-hover:text-primary transition-colors">We are all curators now, but who is the audience?</h4>
+</div>
+<div class="group cursor-pointer">
+<p class="font-label text-[10px] text-secondary mb-2">BY MARCUS THORNE</p>
+<h4 class="font-headline text-xl font-bold group-hover:text-primary transition-colors">The moral imperative of the 404 page.</h4>
+</div>
+<div class="group cursor-pointer">
+<p class="font-label text-[10px] text-secondary mb-2">BY SARAH JENKINS</p>
+<h4 class="font-headline text-xl font-bold group-hover:text-primary transition-colors">Hypertext was never meant to be this fast.</h4>
+</div>
+</div>
+</div>
+<div class="p-6 border border-outline/10">
+<h2 class="font-label text-xs tracking-wider uppercase text-secondary font-bold mb-6">Dispatch Gazetteer</h2>
+<div class="aspect-square bg-surface-container mb-4 overflow-hidden grayscale">
+<img class="w-full h-full object-cover" data-alt="High-contrast black and white satellite view of a mountain range with deep shadows and sharp ridges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNWKD1cG2YUp-Dz3BkIasQs-UdmQcqmXUYFJ0Jgksi9MjAcdSmDWOBzpZ4l0YEDVNr4S5hSBSQ7HnzyrdiWUx_H22RltdEls1MT-_g5x4l-idclNeot6aH-VLhDA3OG8367kJHqKb5-NWbItQRFv1WIG2KTZvThpzTSqmGB9JtTlOVReLyqr1KPRo4zBwCSMH4HXAiwWw1P6ATroz1eGzukXKZrdzSFQF0ssNhKaqXRSdD0usS4TuxaQIc0w9da8IzfPgoFJQyopJS"/>
+</div>
+<p class="font-body text-sm italic text-secondary">
+                        Field Report: Mapping the silence of the North Atlantic fiber cables.
+                    </p>
+</div>
+<div class="bg-secondary-container p-6 text-on-secondary-container">
+<h2 class="font-label text-xs tracking-widest uppercase font-black mb-4">Classifieds</h2>
+<p class="font-body text-sm leading-relaxed">
+                        WANTED: Analog tape engineer for archival project in the Hebrides. Must possess knowledge of 1970s hardware.
+                    </p>
+<div class="mt-4 pt-4 border-t border-secondary/20 font-label text-[10px] uppercase font-bold">
+                        Box No. 492
+                    </div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#dbdad4] dark:bg-stone-950 w-full py-12 px-8 flex flex-col items-center gap-4 text-center mt-24 border-t-4 border-double border-[#cfc5b8]">
+<div class="text-lg font-serif italic text-stone-800 dark:text-stone-200">Hypertext Gazette</div>
+<div class="flex gap-6 font-serif newsreader text-sm italic text-stone-500">
+<a class="transition-opacity hover:opacity-80 hover:text-[#4b4bd4] underline decoration-[#4b4bd4]" href="#">About Us</a>
+<a class="transition-opacity hover:opacity-80 hover:text-[#4b4bd4]" href="#">Advertising</a>
+<a class="transition-opacity hover:opacity-80 hover:text-[#4b4bd4]" href="#">Staff</a>
+<a class="transition-opacity hover:opacity-80 hover:text-[#4b4bd4]" href="#">Terms of Service</a>
+</div>
+<p class="font-serif newsreader text-sm italic text-stone-500 max-w-2xl mt-4">
+            © 2024 Hypertext Gazette. All rights reserved. No part of this publication may be reproduced.
+        </p>
+</footer>
+</body></html>

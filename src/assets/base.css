@@ -1,0 +1,21 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+/* Single scroll: only the feed list (and optional sidebar) scroll; no document scrollbar */
+#app {
+  height: 100%;
+  overflow: hidden;
+}
