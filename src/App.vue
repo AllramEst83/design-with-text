@@ -173,14 +173,14 @@ onUnmounted(() => {
       <div class="mx-auto flex w-full flex-row items-end justify-between">
         <div>
           <p class="font-label text-[0.625rem] uppercase tracking-widest text-secondary">
-            Volume I — The Digital Archivist
+            The Digital Archivist
           </p>
           <h1 class="font-headline mt-1 text-5xl font-black uppercase tracking-tight text-primary">
             Hypertext Gazette
           </h1>
         </div>
         <p class="font-label max-w-sm pb-1 text-right text-[0.625rem] uppercase tracking-wider text-secondary">
-          Curated RSS dispatches · Reader mode with archival typography
+          RSS dispatches · Reader mode
         </p>
       </div>
     </header>
