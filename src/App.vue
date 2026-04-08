@@ -10,7 +10,7 @@ import { useFeedSourceFilter } from '@/composables/useFeedSourceFilter'
 import { useRssFeeds } from '@/composables/useRssFeeds'
 import type { FeedItem } from '@/types/rss'
 
-const { loadedFeeds, allItems, loading, error, addFeed, removeFeed } = useRssFeeds()
+const { loadedFeeds, allItems, loading, error, addFeed, removeFeed, refreshFeeds } = useRssFeeds()
 
 const { selectedFeedUrls, filteredItems, selectAllSources, selectNoSources } = useFeedSourceFilter(
   loadedFeeds,
@@ -220,6 +220,7 @@ onUnmounted(() => {
             :error="error"
             @add="onAddFeed"
             @remove="removeFeed"
+            @refresh="refreshFeeds"
             @open-settings="openSettings"
           />
         </template>
@@ -287,6 +288,7 @@ onUnmounted(() => {
             :error="error"
             @add="onAddFeed"
             @remove="removeFeed"
+            @refresh="refreshFeeds"
             @open-settings="openSettings"
           />
         </aside>

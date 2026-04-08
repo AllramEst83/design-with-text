@@ -2,7 +2,7 @@ import { computed, ref, watch } from 'vue'
 
 import type { FeedItem, LoadedFeed } from '@/types/rss'
 import { stripHtml } from '@/lib/text'
-import { loadRssState, saveRssState } from '@/lib/storage/rss-store'
+import { clearRssState, loadRssState, saveRssState } from '@/lib/storage/rss-store'
 
 interface RssParserItem {
   title?: string
@@ -57,6 +57,21 @@ function mapItem(
     contentHtml,
     feedUrl,
     feedTitle,
+  }
+}
+
+async function fetchFeedByUrl(url: string): Promise<LoadedFeed> {
+  const res = await fetch(`/api/rss?url=${encodeURIComponent(url)}`)
+  const data = (await res.json()) as RssParserFeed & { error?: string }
+  if (!res.ok) {
+    throw new Error(data.error || res.statusText || 'Request failed')
+  }
+  const items = data.items ?? []
+  const feedTitle = (data.title && data.title.trim()) || new URL(url).hostname
+  return {
+    url,
+    title: feedTitle,
+    items: items.map((it, i) => mapItem(it, url, feedTitle, i)),
   }
 }
 
@@ -120,17 +135,7 @@ export function useRssFeeds() {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`/api/rss?url=${encodeURIComponent(trimmed)}`)
-      const data = (await res.json()) as RssParserFeed & { error?: string }
-      if (!res.ok) {
-        throw new Error(data.error || res.statusText || 'Request failed')
-      }
-      const items = data.items ?? []
-      const feed: LoadedFeed = {
-        url: trimmed,
-        title: (data.title && data.title.trim()) || new URL(trimmed).hostname,
-        items: items.map((it, i) => mapItem(it, trimmed, data.title ?? trimmed, i)),
-      }
+      const feed = await fetchFeedByUrl(trimmed)
       loadedFeeds.value = [...loadedFeeds.value, feed]
       void saveRssState(loadedFeeds.value)
     } catch (e) {
@@ -145,6 +150,55 @@ export function useRssFeeds() {
     void saveRssState(loadedFeeds.value)
   }
 
+  async function refreshFeeds() {
+    const existingFeeds = loadedFeeds.value.map((feed) => ({ url: feed.url, title: feed.title }))
+
+    loading.value = true
+    error.value = null
+
+    try {
+      await clearRssState()
+
+      if (existingFeeds.length === 0) {
+        loadedFeeds.value = []
+        return
+      }
+
+      const refreshed = await Promise.allSettled(existingFeeds.map((feed) => fetchFeedByUrl(feed.url)))
+      const nextFeeds: LoadedFeed[] = []
+      const failedUrls: string[] = []
+
+      refreshed.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          nextFeeds.push(result.value)
+          return
+        }
+
+        failedUrls.push(existingFeeds[index]!.url)
+        nextFeeds.push({
+          url: existingFeeds[index]!.url,
+          title: existingFeeds[index]!.title,
+          items: [],
+        })
+      })
+
+      loadedFeeds.value = nextFeeds
+      await saveRssState(nextFeeds)
+
+      if (failedUrls.length > 0) {
+        error.value =
+          failedUrls.length === 1
+            ? `Could not refresh ${failedUrls[0]}.`
+            : `Could not refresh ${failedUrls.length} feeds.`
+      }
+    } catch (e) {
+      loadedFeeds.value = []
+      error.value = e instanceof Error ? e.message : 'Could not refresh feeds'
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loadedFeeds,
     allItems,
@@ -152,5 +206,6 @@ export function useRssFeeds() {
     error,
     addFeed,
     removeFeed,
+    refreshFeeds,
   }
 }

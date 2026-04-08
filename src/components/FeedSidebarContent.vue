@@ -11,6 +11,7 @@ defineProps<{
 const emit = defineEmits<{
   add: [url: string]
   remove: [url: string]
+  refresh: []
   openSettings: []
 }>()
 </script>
@@ -59,7 +60,16 @@ const emit = defineEmits<{
       </p>
     </div>
 
-    <div class="mt-auto border-t border-outline/15 pt-4">
+    <div class="mt-auto space-y-3 border-t border-outline/15 pt-4">
+      <button
+        type="button"
+        class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface disabled:cursor-not-allowed disabled:text-secondary/50"
+        :disabled="loading || loadedFeeds.length === 0"
+        @click="emit('refresh')"
+      >
+        <span class="material-symbols-outlined text-[15px]">refresh</span>
+        {{ loading ? 'Refreshing feeds' : 'Refresh feeds' }}
+      </button>
       <button
         type="button"
         class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface"
