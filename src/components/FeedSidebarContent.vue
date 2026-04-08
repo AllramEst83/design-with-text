@@ -18,7 +18,7 @@ const emit = defineEmits<{
   <div class="rule-column flex h-full w-full flex-col overflow-y-auto p-5">
     <FeedInput :loading="loading" :error="error" @add="(url) => emit('add', url)" />
     
-    <hr class="my-8 border-t border-outline/30" />
+    <div style="margin: 1.0rem 0; height: 1px; width: 100%; background-color: currentColor; opacity: 0.15; flex-shrink: 0;"></div>
     
     <div class="space-y-6">
       <div>
