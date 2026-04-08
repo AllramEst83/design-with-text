@@ -23,10 +23,10 @@ const emit = defineEmits<{
 
     <div class="space-y-6">
       <div>
-        <h2 class="font-label text-[10px] font-bold uppercase tracking-widest text-primary">
+        <h2 class="font-label text-[0.625rem] font-bold uppercase tracking-widest text-primary">
           The Directory
         </h2>
-        <p class="font-label mt-1 text-[10px] uppercase tracking-wider text-secondary">
+        <p class="font-label mt-1 text-[0.625rem] uppercase tracking-wider text-secondary">
           Feeds you have added
         </p>
       </div>
@@ -38,33 +38,34 @@ const emit = defineEmits<{
           class="group flex items-start justify-between gap-2"
         >
           <div class="min-w-0 flex-1">
-            <p class="font-label truncate text-[10px] font-bold uppercase tracking-wider text-on-surface">
+            <p class="font-label truncate text-[0.625rem] font-bold uppercase tracking-wider text-on-surface">
               {{ feed.title }}
             </p>
-            <p class="font-label mt-1 truncate text-[9px] text-secondary/70">
+            <p class="font-label mt-1 truncate text-[0.5625rem] text-secondary/70">
               {{ feed.url }}
             </p>
           </div>
           <button
             type="button"
-            class="font-label shrink-0 cursor-pointer text-[9px] uppercase tracking-widest text-secondary/60 underline decoration-1 underline-offset-2 transition-colors hover:text-error"
+            class="font-label shrink-0 cursor-pointer text-[0.5625rem] uppercase tracking-widest text-secondary/60 underline decoration-1 underline-offset-2 transition-colors hover:text-error"
             @click="emit('remove', feed.url)"
           >
             Remove
           </button>
         </li>
       </ul>
-      <p v-else class="font-label text-[10px] text-secondary">
+      <p v-else class="font-label text-[0.625rem] text-secondary">
         No feeds added yet.
       </p>
     </div>
 
-    <div class="mt-auto pt-6">
+    <div class="mt-auto border-t border-outline/15 pt-4">
       <button
         type="button"
-        class="font-label text-[10px] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2 transition-colors hover:text-primary-container"
+        class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface"
         @click="emit('openSettings')"
       >
+        <span class="material-symbols-outlined text-[15px]">settings</span>
         Settings
       </button>
     </div>

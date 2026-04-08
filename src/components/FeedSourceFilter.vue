@@ -80,14 +80,14 @@ onUnmounted(() => document.removeEventListener('click', onDocClick, true))
         >
           <button
             type="button"
-            class="flex-1 bg-primary py-2 font-label text-[10px] font-bold uppercase tracking-wider text-on-primary hover:bg-primary-container hover:text-on-primary-container"
+            class="flex-1 bg-primary py-2 font-label text-[0.625rem] font-bold uppercase tracking-wider text-on-primary hover:bg-primary-container hover:text-on-primary-container"
             @click="onSelectAll"
           >
             Select all
           </button>
           <button
             type="button"
-            class="flex-1 border border-outline/30 bg-transparent py-2 font-label text-[10px] font-bold uppercase tracking-wider text-secondary hover:border-primary/40 hover:text-primary"
+            class="flex-1 border border-outline/30 bg-transparent py-2 font-label text-[0.625rem] font-bold uppercase tracking-wider text-secondary hover:border-primary/40 hover:text-primary"
             @click="onSelectNone"
           >
             Select none
@@ -96,7 +96,7 @@ onUnmounted(() => document.removeEventListener('click', onDocClick, true))
 
         <p
           v-if="!feeds.length"
-          class="px-3 py-4 font-label text-[10px] text-secondary"
+          class="px-3 py-4 font-label text-[0.625rem] text-secondary"
         >
           Add a feed to filter sources.
         </p>

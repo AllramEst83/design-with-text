@@ -12,6 +12,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@chenglou/pretext@^0.0.4",
+        "npm:@extractus/feed-extractor@^7.1.7",
         "npm:@netlify/functions@^4.2.0",
         "npm:@tailwindcss/vite@^4.2.2",
         "npm:@tanstack/vue-virtual@^3.13.23",

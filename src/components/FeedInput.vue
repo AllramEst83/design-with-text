@@ -21,7 +21,7 @@ function submit() {
 <template>
   <div class="space-y-4">
     <h2 class="font-label text-xs tracking-wider uppercase text-primary font-bold">Add a feed</h2>
-    <p class="font-label text-[10px] text-secondary leading-relaxed">
+    <p class="font-label text-[0.625rem] text-secondary leading-relaxed">
       Paste one RSS URL at a time. Feeds load through the dev server proxy to avoid browser CORS limits.
     </p>
     <form class="flex flex-col gap-3" @submit.prevent="submit">

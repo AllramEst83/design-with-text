@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>THE ARCHIVIST | Component Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Public+Sans:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e3e3dd",
+                        "on-primary-fixed-variant": "#312ebc",
+                        "on-tertiary-fixed": "#261900",
+                        "background": "#faf9f3",
+                        "on-surface-variant": "#4c463c",
+                        "secondary": "#6a5d43",
+                        "on-secondary": "#ffffff",
+                        "outline": "#7e766b",
+                        "secondary-fixed-dim": "#d6c4a5",
+                        "on-primary-fixed": "#09006b",
+                        "on-primary-container": "#3a38c4",
+                        "surface-tint": "#4b4bd4",
+                        "primary-container": "#babbff",
+                        "surface-bright": "#faf9f3",
+                        "surface-container-high": "#e9e8e2",
+                        "surface-container-low": "#f5f4ee",
+                        "inverse-on-surface": "#f2f1eb",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#f0debd",
+                        "surface-variant": "#e3e3dd",
+                        "tertiary": "#775a19",
+                        "on-secondary-fixed": "#231a06",
+                        "inverse-primary": "#c1c1ff",
+                        "tertiary-fixed": "#ffdea5",
+                        "tertiary-container": "#e3bb71",
+                        "primary-fixed-dim": "#c1c1ff",
+                        "surface": "#faf9f3",
+                        "primary-fixed": "#e1dfff",
+                        "on-surface": "#1b1c19",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "on-secondary-fixed-variant": "#51452d",
+                        "surface-container": "#efeee8",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#664a08",
+                        "on-secondary-container": "#6e6147",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#cfc5b8",
+                        "secondary-fixed": "#f3e0c0",
+                        "surface-dim": "#dbdad4",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-background": "#1b1c19",
+                        "primary": "#4b4bd4",
+                        "inverse-surface": "#30312d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader"],
+                        "body": ["Newsreader"],
+                        "label": ["Public Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Newsreader', serif; line-height: 1.6; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .rule-column { border-right: 1px solid rgba(106, 93, 67, 0.1); }
+        .news-underline { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-[#faf9f3] dark:bg-stone-900 font-['Newsreader'] uppercase tracking-tight docked full-width top-0 border-b-2 border-[#6a5d43]/20 flex justify-between items-center px-8 py-4 w-full z-50">
+<div class="text-3xl font-black text-[#1b1c19] dark:text-[#efeee8] tracking-tighter">THE ARCHIVIST</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-[#6a5d43] dark:text-stone-400 hover:text-[#4b4bd4] transition-colors duration-200" href="#">Dispatch</a>
+<a class="text-[#6a5d43] dark:text-stone-400 hover:text-[#4b4bd4] transition-colors duration-200" href="#">Records</a>
+<a class="text-[#6a5d43] dark:text-stone-400 hover:text-[#4b4bd4] transition-colors duration-200" href="#">Chronicle</a>
+<a class="text-[#4b4bd4] dark:text-[#babbff] border-b-2 border-[#4b4bd4] pb-1" href="#">Folio</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#6a5d43]">settings</span>
+<span class="material-symbols-outlined text-[#6a5d43]">account_circle</span>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col p-6 w-64 bg-[#f5f4ee] dark:bg-stone-800/50 border-r border-[#6a5d43]/10 h-auto sticky top-0">
+<div class="mb-12">
+<h2 class="font-['Newsreader'] font-bold text-xl text-[#1b1c19]">The Archivist</h2>
+<p class="font-['Public_Sans'] font-medium text-xs text-[#6a5d43]">Vol. 01 Edition</p>
+</div>
+<nav class="flex flex-col gap-6 flex-grow">
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-xs text-[#6a5d43] hover:bg-[#dbdad4] transition-all p-2 cursor-pointer">
+<span class="material-symbols-outlined">home</span> Home
+                </div>
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-xs text-[#6a5d43] hover:bg-[#dbdad4] transition-all p-2 cursor-pointer">
+<span class="material-symbols-outlined">newspaper</span> Latest
+                </div>
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-xs text-[#4b4bd4] font-bold underline underline-offset-4 p-2 cursor-pointer">
+<span class="material-symbols-outlined">history_edu</span> Archive
+                </div>
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-xs text-[#6a5d43] hover:bg-[#dbdad4] transition-all p-2 cursor-pointer">
+<span class="material-symbols-outlined">menu_book</span> Documentation
+                </div>
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-xs text-[#6a5d43] hover:bg-[#dbdad4] transition-all p-2 cursor-pointer">
+<span class="material-symbols-outlined">architecture</span> System
+                </div>
+</nav>
+<div class="mt-auto pt-8 border-t border-[#6a5d43]/10">
+<button class="w-full bg-primary text-on-primary py-3 font-['Public_Sans'] text-xs font-bold mb-4">Subscribe Now</button>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-[10px] text-[#6a5d43]"><span class="material-symbols-outlined text-sm">settings</span> Settings</div>
+<div class="flex items-center gap-3 font-['Public_Sans'] font-medium text-[10px] text-[#6a5d43]"><span class="material-symbols-outlined text-sm">help_outline</span> Help</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 px-8 lg:px-16 py-12 max-w-5xl">
+<!-- 1. Headings -->
+<section class="mb-16">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">01. Typography Hierarchy</span>
+<h1 class="text-[3.5rem] font-headline font-black leading-tight tracking-tighter mb-4">H1: The Editorial Masthead</h1>
+<h2 class="text-[1.75rem] font-headline font-bold mb-3 border-t-2 border-secondary/20 pt-2">H2: Sectional Authority</h2>
+<h3 class="text-[1.125rem] font-headline font-bold mb-2 italic">H3: The Descriptive Subsection</h3>
+<h4 class="text-base font-headline font-bold uppercase tracking-tight text-secondary">H4: Minor Classification</h4>
+</section>
+<!-- 2. Text Paragraphs & Links -->
+<section class="mb-16 max-w-2xl">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">02. Copy &amp; Hyperlinks</span>
+<p class="text-lg leading-relaxed mb-6">
+                    This paragraph demonstrates the <span class="italic font-medium">Newsreader</span> body text style. We prioritize legibility and breathability, using a 1.6 line-height to evoke the feeling of a morning broadsheet. It is vital that all <a class="text-primary news-underline" href="#">hypertext links</a> remain clearly distinguished from the rest of the body text to maintain historical web continuity.
+                </p>
+<p class="text-lg leading-relaxed">
+                    When citing external sources or internal cross-references, we use the <a class="text-primary news-underline" href="#">Primary Hyperlink Blue</a> (#4B4BD4), ensuring it passes WCAG AA contrast against our warm paper-toned background.
+                </p>
+</section>
+<!-- 3. Lists -->
+<section class="mb-16 grid grid-cols-1 md:grid-cols-2 gap-12">
+<div>
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">03. Unordered List</span>
+<ul class="space-y-4 list-none">
+<li class="flex items-start gap-3">
+<span class="text-primary text-xl leading-none mt-1">/</span>
+<span>First-edition archival ink on vellum paper stock.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="text-primary text-xl leading-none mt-1">/</span>
+<span>Hand-stitched leather bindings for premium editions.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="text-primary text-xl leading-none mt-1">/</span>
+<span>Digitally preserved metadata and cross-referenced indices.</span>
+</li>
+</ul>
+</div>
+<div>
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">03. Ordered List</span>
+<ol class="space-y-4 list-none counter-reset-item">
+<li class="flex items-start gap-3">
+<span class="font-bold text-secondary-container bg-secondary px-2 text-xs py-0.5 mt-1">01</span>
+<span>Initialize the digital typesetting engine.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="font-bold text-secondary-container bg-secondary px-2 text-xs py-0.5 mt-1">02</span>
+<span>Apply the tonal background paper texture.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="font-bold text-secondary-container bg-secondary px-2 text-xs py-0.5 mt-1">03</span>
+<span>Render the editorial content with serif priority.</span>
+</li>
+</ol>
+</div>
+</section>
+<hr class="border-t-4 border-double border-secondary/20 mb-16"/>
+<!-- 4. Form -->
+<section class="mb-16 p-8 bg-surface-container-low">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-8 block">04. The Registry Form</span>
+<form class="space-y-8 max-w-lg">
+<div class="flex flex-col gap-2">
+<label class="font-label text-xs uppercase font-bold text-on-surface" for="name">Curator Name</label>
+<input class="bg-transparent border-0 border-b border-outline py-2 focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-colors font-body text-lg" id="name" placeholder="John Doe" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<span class="font-label text-xs uppercase font-bold text-on-surface">Preferences</span>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-4 h-4 rounded-none border-secondary text-primary focus:ring-offset-background focus:ring-primary" type="checkbox"/>
+<span class="font-body">Receive Daily Gazette</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-4 h-4 rounded-none border-secondary text-primary focus:ring-offset-background focus:ring-primary" type="checkbox"/>
+<span class="font-body">Weekly Archive Digest</span>
+</label>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-label text-xs uppercase font-bold text-on-surface">Edition Type</span>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="w-4 h-4 border-secondary text-primary focus:ring-offset-background focus:ring-primary" name="edition" type="radio"/>
+<span class="font-body">Standard</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-4 h-4 border-secondary text-primary focus:ring-offset-background focus:ring-primary" name="edition" type="radio"/>
+<span class="font-body">Deluxe Archive</span>
+</label>
+</div>
+</div>
+</form>
+</section>
+<!-- 5. Buttons -->
+<section class="mb-16">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">05. Call to Action States</span>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary text-on-primary px-8 py-3 font-label font-bold text-xs uppercase hover:bg-primary-container hover:text-on-primary-container transition-colors">Primary Action</button>
+<button class="border border-outline/30 text-primary px-8 py-3 font-label font-bold text-xs uppercase hover:bg-surface-container-high transition-colors">Secondary Action</button>
+<button class="bg-outline/20 text-outline/50 px-8 py-3 font-label font-bold text-xs uppercase cursor-not-allowed" disabled="">Disabled State</button>
+</div>
+</section>
+<!-- 6. Data Table -->
+<section class="mb-16 overflow-x-auto">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">06. Tabular Data</span>
+<table class="w-full text-left border-collapse border-t border-b border-secondary/20">
+<thead>
+<tr class="bg-surface-container-high font-label text-[10px] uppercase tracking-widest">
+<th class="px-4 py-3">Archive ID</th>
+<th class="px-4 py-3">Publication Date</th>
+<th class="px-4 py-3">Status</th>
+<th class="px-4 py-3">Circulation</th>
+</tr>
+</thead>
+<tbody class="font-body text-sm">
+<tr class="border-b border-outline-variant/20 hover:bg-surface-container-highest transition-colors">
+<td class="px-4 py-4">VOL-01-A</td>
+<td class="px-4 py-4">Jan 12, 1892</td>
+<td class="px-4 py-4 italic">Digitized</td>
+<td class="px-4 py-4">45,000</td>
+</tr>
+<tr class="bg-surface-container-low border-b border-outline-variant/20 hover:bg-surface-container-highest transition-colors">
+<td class="px-4 py-4">VOL-01-B</td>
+<td class="px-4 py-4">Feb 15, 1892</td>
+<td class="px-4 py-4 italic">Processing</td>
+<td class="px-4 py-4">42,500</td>
+</tr>
+<tr class="border-b border-outline-variant/20 hover:bg-surface-container-highest transition-colors">
+<td class="px-4 py-4">VOL-01-C</td>
+<td class="px-4 py-4">Mar 02, 1892</td>
+<td class="px-4 py-4 italic">Verified</td>
+<td class="px-4 py-4">48,200</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- 7. Blockquote -->
+<section class="mb-16 py-8">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">07. Editorial Pull-Quotes</span>
+<blockquote class="pl-8 border-l-4 border-primary relative">
+<p class="text-2xl font-headline italic leading-snug text-on-surface-variant">
+                        "The archive is not a quiet tomb, but a vibrant conversation between what was once written and what we choose to remember today. It is the bridge across time."
+                    </p>
+<footer class="mt-4 font-label text-[10px] uppercase tracking-widest font-bold text-secondary">— THE CHIEF ARCHIVIST, 1924</footer>
+</blockquote>
+</section>
+<!-- 8. Horizontal Rules -->
+<section class="mb-16">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">08. Structural Separators</span>
+<div class="space-y-12">
+<hr class="border-t border-secondary/10"/>
+<hr class="border-t-2 border-secondary/40"/>
+<hr class="border-t-[6px] border-double border-secondary/20"/>
+</div>
+</section>
+<!-- 9. Code Snippets -->
+<section class="mb-16">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">09. Preformatted Systems</span>
+<pre class="bg-surface-dim p-6 border-l-4 border-secondary text-xs font-mono overflow-x-auto text-[#261900]">/* Archival Theming Logic */
+.digital-vellum {
+  background: #FAF9F3;
+  color: #1B1C19;
+  font-family: 'Newsreader', serif;
+}
+
+#entry-point {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+}</pre>
+</section>
+<!-- 10. Media Objects -->
+<section class="mb-16">
+<span class="font-label text-xs uppercase tracking-widest text-secondary mb-4 block">10. Media Artifacts</span>
+<figure class="relative">
+<img alt="Archival Printing Press" class="w-full grayscale brightness-95 contrast-105" data-alt="vintage printing press machines in a dusty sunlight-filled workshop with papers scattered on old wooden tables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1ewmoe11y62sBUalKGKFNR5FHEqjh4LTi7JvRzq4hc8JlEVJnJOs7jjrbfKxykiBRIjDW_Kd8jqhh0TjwuTB3QpIBjVMnv_VCr4y5cMUQWLkwMdENB8f0XeO3tmynZmurbPUrMBaYsA6vL1mkJbLrkbLCfJhHST4tdBaEWu8Anc7FtaEEzVPM8ZvgJa7vZOaWFG-buKdRWgw0gngi_El7gvTFKoVn_gVwF-NZ5Z6g3mx-3kxMAZ3XA_hjFxmXv_5Nh39rBoS3PoSp"/>
+<figcaption class="mt-4 border-t border-outline/20 pt-4 flex justify-between items-baseline">
+<span class="font-headline italic text-lg text-secondary">The original lithography station, circa 1892.</span>
+<span class="font-label text-[10px] uppercase font-bold text-secondary">Credit: Curatorial Museum</span>
+</figcaption>
+</figure>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-[#dbdad4] dark:bg-stone-950 font-['Public_Sans'] text-[10px] tracking-widest uppercase full-width border-t-4 border-double border-[#6a5d43] w-full py-12 px-8 mt-24 flex flex-col items-center gap-4">
+<div class="font-['Newsreader'] italic font-medium text-xl mb-4">The Digital Archivist</div>
+<div class="flex flex-wrap justify-center gap-8 mb-6">
+<a class="text-[#6a5d43] dark:text-stone-500 hover:text-[#1b1c19] dark:hover:text-white transition-opacity duration-300" href="#">Privacy Policy</a>
+<a class="text-[#6a5d43] dark:text-stone-500 hover:text-[#1b1c19] dark:hover:text-white transition-opacity duration-300" href="#">Terms of Service</a>
+<a class="text-[#6a5d43] dark:text-stone-500 hover:text-[#1b1c19] dark:hover:text-white transition-opacity duration-300 underline underline-offset-2" href="#">Masthead</a>
+<a class="text-[#6a5d43] dark:text-stone-500 hover:text-[#1b1c19] dark:hover:text-white transition-opacity duration-300" href="#">Contact</a>
+</div>
+<p class="text-center opacity-70">© 1892-2024 THE DIGITAL ARCHIVIST. ALL RIGHTS RESERVED. PRINTED ON DIGITAL VELLUM.</p>
+</footer>
+</body></html>

@@ -22,21 +22,19 @@ const readerOpen = ref(false)
 const isDesktop = ref(false)
 const isDesktopSidebarCollapsed = ref(false)
 const isMobileSidebarOpen = ref(false)
+const isMobileNavOpen = ref(false)
 const isSettingsOpen = ref(false)
 const appFontScale = ref(100)
-const appTextRoot = ref<HTMLElement | null>(null)
-const mobileSidebarRoot = ref<HTMLElement | null>(null)
 
 const APP_FONT_SCALE_KEY = 'app-font-scale'
 
 let viewportQuery: MediaQueryList | null = null
-let appTextObserver: MutationObserver | null = null
-let mobileTextObserver: MutationObserver | null = null
 
 function syncViewport(query: MediaQueryList | MediaQueryListEvent) {
   isDesktop.value = query.matches
   if (query.matches) {
     isMobileSidebarOpen.value = false
+    isMobileNavOpen.value = false
   }
 }
 
@@ -73,100 +71,124 @@ function openSettings() {
   isMobileSidebarOpen.value = false
 }
 
-function applyTextScale(root: HTMLElement | null) {
-  if (!root) return
-  const scaleFactor = appFontScale.value / 100
-  const targets = [root, ...Array.from(root.querySelectorAll<HTMLElement>('*'))]
-  for (const el of targets) {
-    if (el.classList.contains('material-symbols-outlined')) continue
-    const currentPx = Number.parseFloat(window.getComputedStyle(el).fontSize)
-    if (!Number.isFinite(currentPx) || currentPx <= 0) continue
-    if (!el.dataset.appBaseFontPx) {
-      // If we're already scaled, normalize back to baseline before storing.
-      el.dataset.appBaseFontPx = String(currentPx / scaleFactor)
-    }
-    const basePx = Number.parseFloat(el.dataset.appBaseFontPx)
-    if (!Number.isFinite(basePx) || basePx <= 0) continue
-    el.style.fontSize = `${basePx * scaleFactor}px`
-  }
-}
-
-function startTextScaleObserver(
-  root: HTMLElement | null,
-  assignObserver: (observer: MutationObserver) => void,
-) {
-  if (!root) return
-  applyTextScale(root)
-  const observer = new MutationObserver(() => {
-    applyTextScale(root)
-  })
-  observer.observe(root, { childList: true, subtree: true })
-  assignObserver(observer)
-}
-
 onMounted(() => {
   const persistedScale = window.localStorage.getItem(APP_FONT_SCALE_KEY)
   const parsedScale = Number(persistedScale)
   if (Number.isFinite(parsedScale) && parsedScale >= 85 && parsedScale <= 125) {
     appFontScale.value = parsedScale
   }
+  document.documentElement.style.fontSize = `${appFontScale.value}%`
   viewportQuery = window.matchMedia('(min-width: 1024px)')
   syncViewport(viewportQuery)
   viewportQuery.addEventListener('change', syncViewport)
-  startTextScaleObserver(appTextRoot.value, (observer) => {
-    appTextObserver = observer
-  })
 })
 
 watch(appFontScale, (scale) => {
   window.localStorage.setItem(APP_FONT_SCALE_KEY, String(scale))
-  applyTextScale(appTextRoot.value)
-  applyTextScale(mobileSidebarRoot.value)
-})
-
-watch(isMobileSidebarOpen, (isOpen) => {
-  if (!isOpen) return
-  if (mobileTextObserver) {
-    mobileTextObserver.disconnect()
-    mobileTextObserver = null
-  }
-  startTextScaleObserver(mobileSidebarRoot.value, (observer) => {
-    mobileTextObserver = observer
-  })
+  document.documentElement.style.fontSize = `${scale}%`
 })
 
 onUnmounted(() => {
   viewportQuery?.removeEventListener('change', syncViewport)
-  appTextObserver?.disconnect()
-  mobileTextObserver?.disconnect()
+  document.documentElement.style.fontSize = ''
 })
 </script>
 
 <template>
-  <div ref="appTextRoot" class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
-    <header class="shrink-0 border-b-2 border-primary bg-surface px-6 py-5 md:px-10">
-      <div
-        class="mx-auto flex w-full flex-col gap-3 md:flex-row md:items-end md:justify-between"
-      >
-        <div>
-          <p class="font-label text-[10px] uppercase tracking-widest text-secondary">
-            Volume I — The Digital Archivist
-          </p>
-          <h1
-            class="font-headline mt-1 text-3xl font-black uppercase tracking-tight text-primary md:text-5xl"
-          >
+  <div class="flex h-screen flex-col overflow-hidden bg-background text-on-surface">
+
+    <!-- ── Mobile header ─────────────────────────────────────── -->
+    <header class="shrink-0 border-b-2 border-primary bg-surface lg:hidden">
+      <div class="flex items-center gap-3 px-4 py-3">
+        <!-- Hamburger -->
+        <button
+          type="button"
+          class="shrink-0 p-1 text-primary transition-colors hover:bg-surface-container-low"
+          :aria-expanded="isMobileNavOpen"
+          aria-label="Open navigation menu"
+          @click="isMobileNavOpen = !isMobileNavOpen"
+        >
+          <span class="material-symbols-outlined text-[22px]">
+            {{ isMobileNavOpen ? 'close' : 'menu' }}
+          </span>
+        </button>
+        <!-- Title -->
+        <div class="min-w-0 flex-1">
+          <p class="font-label text-[0.5625rem] uppercase tracking-widest text-secondary">Vol. I — The Digital Archivist</p>
+          <h1 class="font-headline text-xl font-black uppercase leading-none tracking-tight text-primary">
             Hypertext Gazette
           </h1>
         </div>
-        <p class="font-label max-w-sm text-right text-[10px] uppercase tracking-wider text-secondary md:pb-1">
+      </div>
+
+      <!-- Hamburger nav panel (slides in below the title row) -->
+      <Transition
+        enter-active-class="transition duration-150 ease-out"
+        enter-from-class="-translate-y-2 opacity-0"
+        enter-to-class="translate-y-0 opacity-100"
+        leave-active-class="transition duration-100 ease-in"
+        leave-from-class="translate-y-0 opacity-100"
+        leave-to-class="-translate-y-2 opacity-0"
+      >
+        <div
+          v-if="isMobileNavOpen"
+          class="border-t border-outline/20 bg-surface-container-low px-4 pb-4 pt-3"
+        >
+          <div class="flex flex-col gap-3">
+            <!-- Directory button -->
+            <button
+              type="button"
+              class="flex w-full items-center gap-2 border-b border-outline/20 pb-3 font-label text-[0.625rem] uppercase tracking-widest text-primary transition-colors hover:text-primary/70"
+              @click="openMobileSidebar(); isMobileNavOpen = false"
+            >
+              <span class="material-symbols-outlined text-[16px]">book</span>
+              Feed directory &amp; add feeds
+            </button>
+            <!-- Source filter inline -->
+            <div>
+              <p class="mb-2 font-label text-[0.5625rem] uppercase tracking-widest text-secondary">Filter by source</p>
+              <FeedSourceFilter
+                v-model:selected-urls="selectedFeedUrls"
+                :feeds="loadedFeeds"
+                @select-all="selectAllSources"
+                @select-none="selectNoSources"
+              />
+            </div>
+            <!-- Settings -->
+            <button
+              type="button"
+              class="flex w-full items-center gap-2 border-t border-outline/20 pt-3 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface"
+              @click="openSettings(); isMobileNavOpen = false"
+            >
+              <span class="material-symbols-outlined text-[16px]">settings</span>
+              Settings
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </header>
+
+    <!-- ── Desktop header ─────────────────────────────────────── -->
+    <header class="hidden shrink-0 border-b-2 border-primary bg-surface px-10 py-5 lg:block">
+      <div class="mx-auto flex w-full flex-row items-end justify-between">
+        <div>
+          <p class="font-label text-[0.625rem] uppercase tracking-widest text-secondary">
+            Volume I — The Digital Archivist
+          </p>
+          <h1 class="font-headline mt-1 text-5xl font-black uppercase tracking-tight text-primary">
+            Hypertext Gazette
+          </h1>
+        </div>
+        <p class="font-label max-w-sm pb-1 text-right text-[0.625rem] uppercase tracking-wider text-secondary">
           Curated RSS dispatches · Reader mode with archival typography
         </p>
       </div>
     </header>
 
     <main
-      class="mx-auto flex min-h-0 w-full flex-1 flex-col gap-0 overflow-hidden px-6 py-6 lg:flex-row lg:items-stretch lg:justify-center lg:gap-6 lg:px-8 lg:py-6"
+      class="mx-auto flex min-h-0 w-full flex-1 flex-col gap-0 overflow-hidden px-4 py-3 lg:flex-row lg:items-stretch lg:justify-center lg:gap-6 lg:px-8 lg:py-6"
     >
+      <!-- Desktop sidebar -->
       <aside
         class="hidden shrink-0 overflow-hidden bg-surface-container-low lg:flex lg:flex-col lg:self-stretch relative"
         :class="isDesktopSidebarCollapsed ? 'w-14' : 'w-80'"
@@ -174,7 +196,7 @@ onUnmounted(() => {
         <div v-if="isDesktopSidebarCollapsed" class="flex w-full items-start justify-center px-2 py-4">
           <button
             type="button"
-            class="rounded-sm border border-outline/30 bg-surface px-2 py-3 font-label text-[10px] uppercase tracking-widest text-primary transition-colors hover:bg-surface-container"
+            class="rounded-sm border border-outline/30 bg-surface px-2 py-3 font-label text-[0.625rem] uppercase tracking-widest text-primary transition-colors hover:bg-surface-container"
             @click="toggleDesktopSidebar"
             title="Open Directory"
           >
@@ -185,7 +207,7 @@ onUnmounted(() => {
           <div class="flex justify-end p-2 pb-0">
             <button
               type="button"
-              class="rounded-sm border border-outline/30 bg-surface px-2 py-1 font-label text-[10px] uppercase tracking-widest text-primary transition-colors hover:bg-surface-container"
+              class="rounded-sm border border-outline/30 bg-surface px-2 py-1 font-label text-[0.625rem] uppercase tracking-widest text-primary transition-colors hover:bg-surface-container"
               @click="toggleDesktopSidebar"
               title="Close Directory"
             >
@@ -203,25 +225,24 @@ onUnmounted(() => {
         </template>
       </aside>
 
-      <section class="mx-auto flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden pt-2 lg:pt-0">
-        <div
-          class="mb-4 flex shrink-0 flex-col gap-4 border-t-2 border-secondary/20 pt-2 md:flex-row md:items-end md:justify-between md:gap-8"
-        >
+      <section class="mx-auto flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden">
+        <!-- Desktop-only section header -->
+        <div class="mb-4 hidden shrink-0 flex-col gap-4 border-t-2 border-secondary/20 pt-2 lg:flex lg:flex-row lg:items-end lg:justify-between lg:gap-8">
           <div class="min-w-0">
             <h2 class="font-headline text-[1.75rem] font-bold tracking-tight text-on-surface">
               Dispatch
             </h2>
-            <p class="font-label mt-2 text-[10px] uppercase tracking-wider text-secondary">
+            <p class="font-label mt-2 text-[0.625rem] uppercase tracking-wider text-secondary">
               Newest items across your feeds
             </p>
           </div>
-          <div class="flex flex-wrap items-center gap-3 md:gap-4">
+          <div class="flex flex-wrap items-center gap-4">
             <button
               type="button"
-              class="rounded-sm border border-outline/40 px-3 py-2 font-label text-[10px] uppercase tracking-wider text-primary transition-colors hover:bg-surface-container-low lg:hidden"
-              @click="openMobileSidebar"
+              class="rounded-sm border border-outline/40 px-3 py-2 font-label text-[0.625rem] uppercase tracking-wider text-primary transition-colors hover:bg-surface-container-low"
+              @click="toggleDesktopSidebar"
             >
-              Sources
+              {{ isDesktopSidebarCollapsed ? 'Show directory' : 'Hide directory' }}
             </button>
             <FeedSourceFilter
               v-model:selected-urls="selectedFeedUrls"
@@ -232,7 +253,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <FeedList class="min-h-0 flex-1" :items="filteredItems" @select="openReader" />
+        <FeedList class="min-h-0 flex-1" :items="filteredItems" :font-scale="appFontScale" @select="openReader" />
       </section>
     </main>
 
@@ -245,10 +266,10 @@ onUnmounted(() => {
     <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" />
     <AppSettingsPanel v-model="isSettingsOpen" v-model:font-scale="appFontScale" />
 
+    <!-- Mobile sidebar overlay (full-screen, for Directory & Add Feed) -->
     <Teleport to="body">
       <div
         v-if="isMobileSidebarOpen"
-        ref="mobileSidebarRoot"
         class="fixed inset-0 z-40 flex lg:hidden"
         role="dialog"
         aria-modal="true"
@@ -257,12 +278,13 @@ onUnmounted(() => {
         <div class="absolute inset-0 bg-inverse-surface/45" aria-hidden="true" @click="closeMobileSidebar" />
         <aside class="relative z-10 h-full w-full overflow-hidden bg-surface">
           <div class="flex items-center justify-between border-b border-outline/20 px-5 py-4">
-            <h2 class="font-label text-xs uppercase tracking-widest text-primary">Sources</h2>
+            <h2 class="font-label text-xs uppercase tracking-widest text-primary">Directory</h2>
             <button
               type="button"
-              class="font-label text-[10px] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2"
+              class="flex items-center gap-1 font-label text-[0.625rem] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2"
               @click="closeMobileSidebar"
             >
+              <span class="material-symbols-outlined text-[14px]">close</span>
               Close
             </button>
           </div>

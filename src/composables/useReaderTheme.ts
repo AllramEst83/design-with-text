@@ -33,10 +33,10 @@ export const bgTokens: Record<
     muted: '#6a5d43',
   },
   sepia: {
-    bg: '#efeee8',
+    bg: '#e6dcc6',
     fg: '#1b1c19',
     link: '#4b4bd4',
-    muted: '#6a5d43',
+    muted: '#5f5138',
   },
   velvet: {
     bg: '#1a1a22',

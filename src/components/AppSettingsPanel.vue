@@ -38,13 +38,13 @@ function onFontScaleInput(event: Event) {
             <h2 id="settings-title" class="font-headline text-2xl font-bold text-primary">
               Settings
             </h2>
-            <p class="font-label mt-2 text-[10px] uppercase tracking-wider text-secondary">
+            <p class="font-label mt-2 text-[0.625rem] uppercase tracking-wider text-secondary">
               App text scale (reader mode is not affected)
             </p>
           </div>
           <button
             type="button"
-            class="font-label text-[10px] uppercase tracking-widest text-primary underline decoration-1 underline-offset-2"
+            class="font-label text-[0.625rem] uppercase tracking-widest text-primary underline decoration-1 underline-offset-2"
             @click="closePanel"
           >
             Close
@@ -53,10 +53,10 @@ function onFontScaleInput(event: Event) {
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <label class="font-label text-[10px] uppercase tracking-wider text-secondary" for="app-font-scale">
+            <label class="font-label text-[0.625rem] uppercase tracking-wider text-secondary" for="app-font-scale">
               Font size
             </label>
-            <span class="font-label text-[10px] uppercase tracking-wider text-primary">
+            <span class="font-label text-[0.625rem] uppercase tracking-wider text-primary">
               {{ props.fontScale }}%
             </span>
           </div>

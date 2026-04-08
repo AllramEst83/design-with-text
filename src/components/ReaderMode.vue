@@ -104,7 +104,7 @@ function onSettingsUpdate(s: ReaderSettings) {
         :style="readerStyleVars"
       >
         <header
-          class="editorial-glass flex shrink-0 items-start justify-between gap-4 border-b border-outline/10 px-4 py-4 md:px-8"
+          class="reader-glass flex shrink-0 items-start justify-between gap-4 border-b border-outline/10 px-4 py-4"
         >
           <div class="min-w-0">
             <p class="font-label text-[10px] uppercase tracking-wider text-[var(--reader-muted)]">
@@ -112,7 +112,7 @@ function onSettingsUpdate(s: ReaderSettings) {
             </p>
             <h1
               id="reader-title"
-              class="font-headline mt-1 text-2xl font-bold leading-tight text-[var(--reader-fg)] md:text-4xl"
+              class="font-headline mt-1 text-[24px] font-bold leading-tight text-[var(--reader-fg)] md:text-[36px]"
             >
               {{ item.title }}
             </h1>
@@ -123,7 +123,7 @@ function onSettingsUpdate(s: ReaderSettings) {
           <div class="flex shrink-0 gap-2">
             <a
               v-if="originalHref"
-              class="news-link font-label text-xs font-bold text-[var(--reader-link)]"
+              class="news-link font-label text-[12px] font-bold text-[var(--reader-link)]"
               :href="originalHref"
               target="_blank"
               rel="noopener noreferrer"
@@ -132,7 +132,7 @@ function onSettingsUpdate(s: ReaderSettings) {
             </a>
             <button
               type="button"
-              class="bg-primary px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-on-primary hover:bg-primary-container hover:text-on-primary-container"
+              class="bg-primary px-4 py-2 font-label text-[12px] font-bold uppercase tracking-wider text-on-primary hover:bg-primary-container hover:text-on-primary-container"
               @click="emit('close')"
             >
               Exit reader
@@ -170,6 +170,23 @@ function onSettingsUpdate(s: ReaderSettings) {
 </template>
 
 <style scoped>
+.reader-glass {
+  background-color: color-mix(in srgb, var(--reader-bg) 82%, transparent);
+  backdrop-filter: blur(20px);
+}
+
+.reader-glass {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .reader-glass {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
 .reader-content :deep(a) {
   color: var(--reader-link);
   text-decoration: underline;

@@ -33,6 +33,18 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
   { id: 'sepia', label: 'Sepia archive' },
   { id: 'velvet', label: 'Crushed velvet' },
 ]
+
+const activeTokens = computed(() => bgTokens[props.settings.bgPreset])
+
+const panelVars = computed(() => {
+  const t = activeTokens.value
+  return {
+    '--controls-bg': t.bg,
+    '--controls-fg': t.fg,
+    '--controls-muted': t.muted,
+    '--controls-border': `color-mix(in srgb, ${t.muted} 22%, transparent)`,
+  } as Record<string, string>
+})
 </script>
 
 <template>
@@ -47,14 +59,15 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
     >
       <div
         v-if="panelOpen"
-        class="pointer-events-auto editorial-glass text-on-surface max-h-[min(80vh,520px)] w-[min(92vw,320px)] overflow-y-auto border border-outline/10 p-5 shadow-[0_20px_40px_rgba(106,93,67,0.08)]"
+        class="controls-glass pointer-events-auto max-h-[min(80vh,520px)] w-[min(92vw,320px)] overflow-y-auto border p-5 shadow-[0_20px_40px_rgba(106,93,67,0.08)]"
+        :style="panelVars"
         role="dialog"
         aria-label="Reader settings"
       >
-        <h3 class="font-label text-xs font-bold uppercase tracking-wider text-primary">Typography</h3>
+        <h3 class="font-label text-[12px] font-bold uppercase tracking-wider text-primary">Typography</h3>
         <div class="mt-4 space-y-4">
           <label class="block">
-            <span class="font-label text-[10px] uppercase tracking-wider text-secondary">Font size</span>
+            <span class="font-label text-[10px] uppercase tracking-wider text-[var(--controls-muted)]">Font size</span>
             <input
               type="range"
               class="mt-2 w-full accent-primary"
@@ -63,13 +76,13 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
               :value="settings.fontSizePx"
               @input="patch({ fontSizePx: Number(($event.target as HTMLInputElement).value) })"
             />
-            <span class="font-label text-[10px] text-secondary">{{ settings.fontSizePx }}px</span>
+            <span class="font-label text-[10px] text-[var(--controls-muted)]">{{ settings.fontSizePx }}px</span>
           </label>
 
           <label class="block">
-            <span class="font-label text-[10px] uppercase tracking-wider text-secondary">Font family</span>
+            <span class="font-label text-[10px] uppercase tracking-wider text-[var(--controls-muted)]">Font family</span>
             <select
-              class="mt-2 w-full border-0 border-b border-outline/30 bg-transparent py-2 font-body text-sm text-on-surface outline-none focus:border-b-2 focus:border-primary"
+              class="mt-2 w-full border-0 border-b bg-transparent py-2 font-body text-[14px] text-[var(--controls-fg)] outline-none focus:border-b-2 focus:border-primary"
               :value="settings.fontFamily"
               @change="patch({ fontFamily: ($event.target as HTMLSelectElement).value })"
             >
@@ -80,7 +93,7 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
           </label>
 
           <label class="block">
-            <span class="font-label text-[10px] uppercase tracking-wider text-secondary">Line height</span>
+            <span class="font-label text-[10px] uppercase tracking-wider text-[var(--controls-muted)]">Line height</span>
             <input
               type="range"
               class="mt-2 w-full accent-primary"
@@ -90,11 +103,11 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
               :value="settings.lineHeight"
               @input="patch({ lineHeight: Number(($event.target as HTMLInputElement).value) })"
             />
-            <span class="font-label text-[10px] text-secondary">{{ settings.lineHeight.toFixed(2) }}</span>
+            <span class="font-label text-[10px] text-[var(--controls-muted)]">{{ settings.lineHeight.toFixed(2) }}</span>
           </label>
 
           <label class="block">
-            <span class="font-label text-[10px] uppercase tracking-wider text-secondary">Column width</span>
+            <span class="font-label text-[10px] uppercase tracking-wider text-[var(--controls-muted)]">Column width</span>
             <input
               type="range"
               class="mt-2 w-full accent-primary"
@@ -104,11 +117,11 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
               :value="settings.maxWidthRem"
               @input="patch({ maxWidthRem: Number(($event.target as HTMLInputElement).value) })"
             />
-            <span class="font-label text-[10px] text-secondary">{{ settings.maxWidthRem }}rem</span>
+            <span class="font-label text-[10px] text-[var(--controls-muted)]">{{ settings.maxWidthRem }}rem</span>
           </label>
 
           <label class="block">
-            <span class="font-label text-[10px] uppercase tracking-wider text-secondary">Letter spacing</span>
+            <span class="font-label text-[10px] uppercase tracking-wider text-[var(--controls-muted)]">Letter spacing</span>
             <input
               type="range"
               class="mt-2 w-full accent-primary"
@@ -118,26 +131,28 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
               :value="settings.letterSpacingEm"
               @input="patch({ letterSpacingEm: Number(($event.target as HTMLInputElement).value) })"
             />
-            <span class="font-label text-[10px] text-secondary">{{ settings.letterSpacingEm.toFixed(3) }}em</span>
+            <span class="font-label text-[10px] text-[var(--controls-muted)]">
+              {{ settings.letterSpacingEm.toFixed(3) }}em
+            </span>
           </label>
         </div>
 
-        <h3 class="font-label mt-8 text-xs font-bold uppercase tracking-wider text-primary">Paper</h3>
+        <h3 class="font-label mt-8 text-[12px] font-bold uppercase tracking-wider text-primary">Paper</h3>
         <div class="mt-3 grid grid-cols-1 gap-2">
           <button
             v-for="p in presets"
             :key="p.id"
             type="button"
-            class="flex items-center gap-3 border px-3 py-2 text-left font-label text-xs uppercase tracking-wider transition-colors"
+            class="flex items-center gap-3 border px-3 py-2 text-left font-label text-[12px] uppercase tracking-wider transition-colors"
             :class="
               settings.bgPreset === p.id
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-outline/20 text-secondary hover:border-primary/40'
+                : 'text-[var(--controls-muted)] hover:border-primary/40'
             "
             @click="patch({ bgPreset: p.id })"
           >
             <span
-              class="h-6 w-6 shrink-0 border border-outline/20"
+              class="h-6 w-6 shrink-0 border"
               :style="{ background: bgTokens[p.id].bg }"
               aria-hidden="true"
             />
@@ -158,3 +173,20 @@ const presets: { id: ReaderBgPreset; label: string }[] = [
     </button>
   </div>
 </template>
+
+<style scoped>
+.controls-glass {
+  background-color: color-mix(in srgb, var(--controls-bg) 84%, transparent);
+  border-color: var(--controls-border);
+  color: var(--controls-fg);
+  backdrop-filter: blur(20px);
+}
+
+.controls-glass select {
+  border-bottom-color: var(--controls-border);
+}
+
+.controls-glass button {
+  border-color: var(--controls-border);
+}
+</style>
