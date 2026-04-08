@@ -237,13 +237,6 @@ onUnmounted(() => {
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              class="rounded-sm border border-outline/40 px-3 py-2 font-label text-[0.625rem] uppercase tracking-wider text-primary transition-colors hover:bg-surface-container-low"
-              @click="toggleDesktopSidebar"
-            >
-              {{ isDesktopSidebarCollapsed ? 'Show directory' : 'Hide directory' }}
-            </button>
             <FeedSourceFilter
               v-model:selected-urls="selectedFeedUrls"
               :feeds="loadedFeeds"
