@@ -114,7 +114,7 @@ onUnmounted(() => {
         </button>
         <!-- Title -->
         <div class="min-w-0 flex-1">
-          <p class="font-label text-[0.5625rem] uppercase tracking-widest text-secondary">Vol. I — The Digital Archivist</p>
+          <p class="font-label text-[0.5625rem] uppercase tracking-widest text-secondary">The Digital Archivist</p>
           <h1 class="font-headline text-xl font-black uppercase leading-none tracking-tight text-primary">
             Hypertext Gazette
           </h1>
@@ -154,6 +154,15 @@ onUnmounted(() => {
                 @select-none="selectNoSources"
               />
             </div>
+            <button
+              type="button"
+              class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface disabled:cursor-not-allowed disabled:text-secondary/50"
+              :disabled="loading || loadedFeeds.length === 0"
+              @click="refreshFeeds(); isMobileNavOpen = false"
+            >
+              <span class="material-symbols-outlined text-[16px]">refresh</span>
+              {{ loading ? 'Refreshing feeds' : 'Refresh feeds' }}
+            </button>
             <!-- Settings -->
             <button
               type="button"
