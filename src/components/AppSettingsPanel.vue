@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+
 const props = defineProps<{
   modelValue: boolean
   fontScale: number
@@ -9,15 +11,31 @@ const emit = defineEmits<{
   'update:fontScale': [value: number]
 }>()
 
+const draftFontScale = ref(props.fontScale)
+
+watch(
+  () => props.fontScale,
+  (next) => {
+    draftFontScale.value = next
+  },
+)
+
 function closePanel() {
   emit('update:modelValue', false)
 }
 
-function onFontScaleInput(event: Event) {
+function onFontScalePreviewInput(event: Event) {
   const target = event.target as HTMLInputElement | null
   if (!target) return
   const value = Number(target.value)
   if (!Number.isFinite(value)) return
+  draftFontScale.value = value
+}
+
+function commitFontScale() {
+  const value = Math.round(draftFontScale.value)
+  if (!Number.isFinite(value)) return
+  if (value === props.fontScale) return
   emit('update:fontScale', value)
 }
 </script>
@@ -57,7 +75,7 @@ function onFontScaleInput(event: Event) {
               Font size
             </label>
             <span class="font-label text-[0.625rem] uppercase tracking-wider text-primary">
-              {{ props.fontScale }}%
+              {{ draftFontScale }}%
             </span>
           </div>
           <input
@@ -67,8 +85,11 @@ function onFontScaleInput(event: Event) {
             min="85"
             max="125"
             step="1"
-            :value="props.fontScale"
-            @input="onFontScaleInput"
+            :value="draftFontScale"
+            @input="onFontScalePreviewInput"
+            @change="commitFontScale"
+            @pointerup="commitFontScale"
+            @touchend="commitFontScale"
           />
           <p class="font-body text-sm text-on-surface-variant">
             This scales the main app typography. Reader mode keeps using its own typography controls.

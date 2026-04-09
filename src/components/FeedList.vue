@@ -6,6 +6,25 @@ import type { ComponentPublicInstance, VNodeRef } from 'vue'
 import { usePretextFeedLayout } from '@/composables/usePretextFeedLayout'
 import type { FeedItem } from '@/types/rss'
 
+function truncateText(text: string | undefined, maxChars: number): string {
+  if (!text) return ''
+  if (text.length <= maxChars) return text
+  return `${text.slice(0, maxChars)}…`
+}
+
+const pubDateFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'full',
+  timeStyle: 'short',
+  hour12: false,
+})
+
+function formatPubDate(pubDate: string | undefined): string {
+  if (!pubDate) return '—'
+  const date = new Date(pubDate)
+  if (Number.isNaN(date.getTime())) return '—'
+  return pubDateFormatter.format(date)
+}
+
 const props = withDefaults(
   defineProps<{
     items: FeedItem[]
@@ -96,13 +115,13 @@ const measureRow: VNodeRef = (node) => {
               @keydown.enter="emit('select', items[v.index]!)"
             >
               <p class="font-label text-[0.625rem] uppercase tracking-wider text-secondary">
-                {{ items[v.index]?.feedTitle }} · {{ items[v.index]?.pubDate ?? '—' }}
+                {{ items[v.index]?.feedTitle }} · {{ formatPubDate(items[v.index]?.pubDate) }}
               </p>
               <h3 class="font-headline mt-2 text-[1.125rem] font-bold leading-snug text-on-surface">
                 {{ items[v.index]?.title }}
               </h3>
               <p class="font-body mt-3 text-base leading-[1.6] text-on-surface-variant">
-                {{ items[v.index]?.excerpt }}
+                {{ truncateText(items[v.index]?.excerpt, 100) }}
               </p>
               <p class="news-link mt-4 font-label text-xs font-bold text-primary">Open reader →</p>
             </article>

@@ -38,4 +38,5 @@ You are an expert in TypeScript, Node.js, Vite, Vue.js, Vue Router, Pinia, VueUs
     - Optimize Web Vitals (LCP, CLS, FID) using tools like Lighthouse or WebPageTest.
 
     Design
-    - Always follow the design guidelines i @design/ 
+    - Always follow the design guidelines in "./design"
+    -- Use it as a style referance to build a cohesive application. 

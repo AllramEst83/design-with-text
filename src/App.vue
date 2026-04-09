@@ -22,7 +22,6 @@ const readerOpen = ref(false)
 const isDesktop = ref(false)
 const isDesktopSidebarCollapsed = ref(false)
 const isMobileSidebarOpen = ref(false)
-const isMobileNavOpen = ref(false)
 const isSettingsOpen = ref(false)
 const appFontScale = ref(100)
 
@@ -34,7 +33,6 @@ function syncViewport(query: MediaQueryList | MediaQueryListEvent) {
   isDesktop.value = query.matches
   if (query.matches) {
     isMobileSidebarOpen.value = false
-    isMobileNavOpen.value = false
   }
 }
 
@@ -100,19 +98,15 @@ onUnmounted(() => {
     <!-- ── Mobile header ─────────────────────────────────────── -->
     <header class="shrink-0 border-b-2 border-primary bg-surface lg:hidden">
       <div class="flex items-center gap-3 px-4 py-3">
-        <!-- Hamburger -->
         <button
           type="button"
           class="shrink-0 p-1 text-primary transition-colors hover:bg-surface-container-low"
-          :aria-expanded="isMobileNavOpen"
+          :aria-expanded="isMobileSidebarOpen"
           aria-label="Open navigation menu"
-          @click="isMobileNavOpen = !isMobileNavOpen"
+          @click="openMobileSidebar()"
         >
-          <span class="material-symbols-outlined text-[22px]">
-            {{ isMobileNavOpen ? 'close' : 'menu' }}
-          </span>
+          <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <!-- Title -->
         <div class="min-w-0 flex-1">
           <p class="font-label text-[0.5625rem] uppercase tracking-widest text-secondary">The Digital Archivist</p>
           <h1 class="font-headline text-xl font-black uppercase leading-none tracking-tight text-primary">
@@ -120,61 +114,6 @@ onUnmounted(() => {
           </h1>
         </div>
       </div>
-
-      <!-- Hamburger nav panel (slides in below the title row) -->
-      <Transition
-        enter-active-class="transition duration-150 ease-out"
-        enter-from-class="-translate-y-2 opacity-0"
-        enter-to-class="translate-y-0 opacity-100"
-        leave-active-class="transition duration-100 ease-in"
-        leave-from-class="translate-y-0 opacity-100"
-        leave-to-class="-translate-y-2 opacity-0"
-      >
-        <div
-          v-if="isMobileNavOpen"
-          class="border-t border-outline/20 bg-surface-container-low px-4 pb-4 pt-3"
-        >
-          <div class="flex flex-col gap-3">
-            <!-- Directory button -->
-            <button
-              type="button"
-              class="flex w-full items-center gap-2 border-b border-outline/20 pb-3 font-label text-[0.625rem] uppercase tracking-widest text-primary transition-colors hover:text-primary/70"
-              @click="openMobileSidebar(); isMobileNavOpen = false"
-            >
-              <span class="material-symbols-outlined text-[16px]">book</span>
-              Feed directory &amp; add feeds
-            </button>
-            <!-- Source filter inline -->
-            <div>
-              <p class="mb-2 font-label text-[0.5625rem] uppercase tracking-widest text-secondary">Filter by source</p>
-              <FeedSourceFilter
-                v-model:selected-urls="selectedFeedUrls"
-                :feeds="loadedFeeds"
-                @select-all="selectAllSources"
-                @select-none="selectNoSources"
-              />
-            </div>
-            <button
-              type="button"
-              class="flex w-full items-center gap-2 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface disabled:cursor-not-allowed disabled:text-secondary/50"
-              :disabled="loading || loadedFeeds.length === 0"
-              @click="refreshFeeds(); isMobileNavOpen = false"
-            >
-              <span class="material-symbols-outlined text-[16px]">refresh</span>
-              {{ loading ? 'Refreshing feeds' : 'Refresh feeds' }}
-            </button>
-            <!-- Settings -->
-            <button
-              type="button"
-              class="flex w-full items-center gap-2 border-t border-outline/20 pt-3 font-label text-[0.625rem] uppercase tracking-widest text-secondary transition-colors hover:text-on-surface"
-              @click="openSettings(); isMobileNavOpen = false"
-            >
-              <span class="material-symbols-outlined text-[16px]">settings</span>
-              Settings
-            </button>
-          </div>
-        </div>
-      </Transition>
     </header>
 
     <!-- ── Desktop header ─────────────────────────────────────── -->
@@ -269,7 +208,7 @@ onUnmounted(() => {
     <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" />
     <AppSettingsPanel v-model="isSettingsOpen" v-model:font-scale="appFontScale" />
 
-    <!-- Mobile sidebar overlay (full-screen, for Directory & Add Feed) -->
+    <!-- Mobile drawer -->
     <Teleport to="body">
       <div
         v-if="isMobileSidebarOpen"
@@ -278,29 +217,63 @@ onUnmounted(() => {
         aria-modal="true"
         aria-label="Feed directory"
       >
-        <div class="absolute inset-0 bg-inverse-surface/45" aria-hidden="true" @click="closeMobileSidebar" />
-        <aside class="relative z-10 h-full w-full overflow-hidden bg-surface">
-          <div class="flex items-center justify-between border-b border-outline/20 px-5 py-4">
-            <h2 class="font-label text-xs uppercase tracking-widest text-primary">Directory</h2>
-            <button
-              type="button"
-              class="flex items-center gap-1 font-label text-[0.625rem] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2"
-              @click="closeMobileSidebar"
-            >
-              <span class="material-symbols-outlined text-[14px]">close</span>
-              Close
-            </button>
-          </div>
-          <FeedSidebarContent
-            :loaded-feeds="loadedFeeds"
-            :loading="loading"
-            :error="error"
-            @add="onAddFeed"
-            @remove="removeFeed"
-            @refresh="refreshFeeds"
-            @open-settings="openSettings"
+        <Transition
+          appear
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="isMobileSidebarOpen"
+            class="absolute inset-0 bg-inverse-surface/45"
+            aria-hidden="true"
+            @click="closeMobileSidebar"
           />
-        </aside>
+        </Transition>
+        <Transition
+          appear
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="-translate-x-full"
+          enter-to-class="translate-x-0"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="translate-x-0"
+          leave-to-class="-translate-x-full"
+        >
+          <aside
+            v-if="isMobileSidebarOpen"
+            class="relative z-10 flex h-full w-[85vw] max-w-xs flex-col overflow-hidden bg-surface-container-low"
+          >
+            <div class="flex items-center justify-between border-b border-outline/20 px-5 py-4">
+              <h2 class="font-label text-xs uppercase tracking-widest text-primary">Directory</h2>
+              <button
+                type="button"
+                class="flex items-center gap-1 font-label text-[0.625rem] uppercase tracking-wider text-primary underline decoration-1 underline-offset-2"
+                @click="closeMobileSidebar"
+              >
+                <span class="material-symbols-outlined text-[14px]">close</span>
+                Close
+              </button>
+            </div>
+            <FeedSidebarContent
+              :loaded-feeds="loadedFeeds"
+              :loading="loading"
+              :error="error"
+              :show-source-filter="true"
+              :source-filter-feeds="loadedFeeds"
+              :selected-urls="selectedFeedUrls"
+              @add="onAddFeed"
+              @remove="removeFeed"
+              @refresh="refreshFeeds"
+              @open-settings="openSettings"
+              @update:selected-urls="(urls) => selectedFeedUrls = urls"
+              @select-all="selectAllSources"
+              @select-none="selectNoSources"
+            />
+          </aside>
+        </Transition>
       </div>
     </Teleport>
   </div>
