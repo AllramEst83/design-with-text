@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/vue-virtual": "^3.13.23",
     "dompurify": "^3.3.3",
+    "dotenv": "^17.4.1",
     "idb-keyval": "^6.2.2",
     "rss-parser": "^3.13.0",
     "tailwindcss": "^4.2.2",

@@ -1,14 +1,33 @@
 import type { Handler } from '@netlify/functions'
 import { extractFromHtml } from '@extractus/article-extractor'
 
+import { guardOrigin } from './utils/origin-guard'
+
 const FETCH_TIMEOUT_MS = 8000
-const CORS_HEADERS = { 'Content-Type': 'application/json' }
 
 export const handler: Handler = async (event) => {
+  const { isAllowed, corsHeaders } = await guardOrigin(event)
+
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: isAllowed ? 204 : 403,
+      headers: corsHeaders,
+      body: '',
+    }
+  }
+
+  if (!isAllowed) {
+    return {
+      statusCode: 403,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Forbidden origin' }),
+    }
+  }
+
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Method not allowed' }),
     }
   }
@@ -17,7 +36,7 @@ export const handler: Handler = async (event) => {
   if (!articleUrl) {
     return {
       statusCode: 400,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Missing url query parameter' }),
     }
   }
@@ -28,7 +47,7 @@ export const handler: Handler = async (event) => {
   } catch {
     return {
       statusCode: 400,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Invalid url query parameter' }),
     }
   }
@@ -36,7 +55,7 @@ export const handler: Handler = async (event) => {
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     return {
       statusCode: 400,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Only http/https URLs are supported' }),
     }
   }
@@ -55,7 +74,7 @@ export const handler: Handler = async (event) => {
     if (!res.ok) {
       return {
         statusCode: 502,
-        headers: CORS_HEADERS,
+        headers: corsHeaders,
         body: JSON.stringify({
           error: `Upstream returned ${res.status} ${res.statusText}`,
           upstream: parsed.hostname,
@@ -67,7 +86,7 @@ export const handler: Handler = async (event) => {
     if (!contentType.includes('html') && !contentType.includes('xml')) {
       return {
         statusCode: 502,
-        headers: CORS_HEADERS,
+        headers: corsHeaders,
         body: JSON.stringify({
           error: 'Upstream did not return HTML',
           upstream: parsed.hostname,
@@ -83,14 +102,14 @@ export const handler: Handler = async (event) => {
     if (!article?.content) {
       return {
         statusCode: 204,
-        headers: CORS_HEADERS,
+        headers: corsHeaders,
         body: '',
       }
     }
 
     return {
       statusCode: 200,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({
         content: article.content,
         title: article.title ?? null,
@@ -103,7 +122,7 @@ export const handler: Handler = async (event) => {
     console.error('extract-article error', isTimeout ? 'timeout' : e)
     return {
       statusCode: 502,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
       body: JSON.stringify({
         error: isTimeout ? 'Request timed out' : (e instanceof Error ? e.message : 'Extraction failed'),
       }),

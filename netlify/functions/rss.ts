@@ -2,12 +2,31 @@ import type { Handler } from '@netlify/functions'
 import { extractFromXml } from '@extractus/feed-extractor'
 
 import type { ExtractedFeed } from '../types/feed-extractor'
+import { guardOrigin } from './utils/origin-guard'
 
 export const handler: Handler = async (event) => {
+  const { isAllowed, corsHeaders } = await guardOrigin(event)
+
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: isAllowed ? 204 : 403,
+      headers: corsHeaders,
+      body: '',
+    }
+  }
+
+  if (!isAllowed) {
+    return {
+      statusCode: 403,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Forbidden origin' }),
+    }
+  }
+
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      headers: { 'Content-Type': 'application/json' },
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Method not allowed' }),
     }
   }
@@ -16,7 +35,7 @@ export const handler: Handler = async (event) => {
   if (!feedUrl) {
     return {
       statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: corsHeaders,
       body: JSON.stringify({ error: 'Missing url query parameter' }),
     }
   }
@@ -28,14 +47,14 @@ export const handler: Handler = async (event) => {
     } catch {
       return {
         statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: corsHeaders,
         body: JSON.stringify({ error: 'Invalid url query parameter' }),
       }
     }
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
       return {
         statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: corsHeaders,
         body: JSON.stringify({ error: 'Only http/https URLs are supported' }),
       }
     }
@@ -54,7 +73,7 @@ export const handler: Handler = async (event) => {
       const snippet = (await res.text()).slice(0, 500)
       return {
         statusCode: 502,
-        headers: { 'Content-Type': 'application/json' },
+        headers: corsHeaders,
         body: JSON.stringify({
           error: `Upstream returned ${res.status} ${res.statusText}`,
           upstream: parsed.hostname,
@@ -73,7 +92,7 @@ export const handler: Handler = async (event) => {
     if (!looksLikeXml) {
       return {
         statusCode: 502,
-        headers: { 'Content-Type': 'application/json' },
+        headers: corsHeaders,
         body: JSON.stringify({
           error: 'Upstream did not return RSS/XML',
           upstream: parsed.hostname,
@@ -93,7 +112,7 @@ export const handler: Handler = async (event) => {
     } catch (e) {
       return {
         statusCode: 502,
-        headers: { 'Content-Type': 'application/json' },
+        headers: corsHeaders,
         body: JSON.stringify({
           error: e instanceof Error ? e.message : 'Unable to parse XML',
           upstream: parsed.hostname,
@@ -123,14 +142,14 @@ export const handler: Handler = async (event) => {
     const payload = { title, items }
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: corsHeaders,
       body: JSON.stringify(payload),
     }
   } catch (e) {
     console.error('rss function error', e)
     return {
       statusCode: 502,
-      headers: { 'Content-Type': 'application/json' },
+      headers: corsHeaders,
       body: JSON.stringify({
         error: e instanceof Error ? e.message : 'Failed to fetch or parse feed',
       }),
