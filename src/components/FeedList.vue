@@ -5,24 +5,12 @@ import type { ComponentPublicInstance, VNodeRef } from 'vue'
 
 import { usePretextFeedLayout } from '@/composables/usePretextFeedLayout'
 import type { FeedItem } from '@/types/rss'
+import { formatPubDate } from '@/utils/date'
 
 function truncateText(text: string | undefined, maxChars: number): string {
   if (!text) return ''
   if (text.length <= maxChars) return text
   return `${text.slice(0, maxChars)}…`
-}
-
-const pubDateFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: 'full',
-  timeStyle: 'short',
-  hour12: false,
-})
-
-function formatPubDate(pubDate: string | undefined): string {
-  if (!pubDate) return '—'
-  const date = new Date(pubDate)
-  if (Number.isNaN(date.getTime())) return '—'
-  return pubDateFormatter.format(date)
 }
 
 const props = withDefaults(

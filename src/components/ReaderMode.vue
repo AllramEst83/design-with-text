@@ -7,6 +7,7 @@ import { useReaderTheme } from '@/composables/useReaderTheme'
 import { useReaderPretextArticleHeight } from '@/composables/useReaderPretextArticle'
 import type { FeedItem } from '@/types/rss'
 import { stripHtml } from '@/lib/text'
+import { formatPubDate } from '@/utils/date'
 import ReaderControls from './ReaderControls.vue'
 
 const SANITIZE_OPTS = {
@@ -18,7 +19,7 @@ const SANITIZE_OPTS = {
     'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'caption',
     'sup', 'sub', 's', 'del', 'ins', 'mark', 'abbr', 'time',
   ],
-  ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'loading', 'rel', 'target', 'colspan', 'rowspan', 'datetime'],
+  ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'loading', 'rel', 'target', 'colspan', 'rowspan', 'datetime'],
   ADD_ATTR: ['loading'],
 }
 
@@ -141,7 +142,7 @@ function onSettingsUpdate(s: ReaderSettings) {
               {{ item.title }}
             </h1>
             <p class="font-label mt-2 text-[10px] text-[var(--reader-muted)]">
-              {{ item.pubDate ?? '' }}
+              {{ formatPubDate(item.pubDate) }}
             </p>
           </div>
           <div class="flex shrink-0 gap-2">
@@ -225,10 +226,91 @@ function onSettingsUpdate(s: ReaderSettings) {
   text-underline-offset: 4px;
 }
 
+.reader-content :deep(p) {
+  margin: 1rem 0;
+}
+
+.reader-content :deep(h1),
+.reader-content :deep(h2),
+.reader-content :deep(h3),
+.reader-content :deep(h4),
+.reader-content :deep(h5),
+.reader-content :deep(h6) {
+  margin: 1.6rem 0 0.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.reader-content :deep(h1) { font-size: 1.6em; }
+.reader-content :deep(h2) { font-size: 1.35em; }
+.reader-content :deep(h3) { font-size: 1.18em; }
+.reader-content :deep(h4) { font-size: 1.05em; }
+.reader-content :deep(h5),
+.reader-content :deep(h6) { font-size: 0.98em; }
+
+.reader-content :deep(ul),
+.reader-content :deep(ol) {
+  margin: 1rem 0;
+  padding-left: 1.25em;
+}
+
+.reader-content :deep(li) {
+  margin: 0.35rem 0;
+}
+
+.reader-content :deep(hr) {
+  margin: 2rem 0;
+  border: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--reader-muted) 25%, transparent);
+}
+
+.reader-content :deep(code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.92em;
+  background: color-mix(in srgb, var(--reader-muted) 12%, transparent);
+  padding: 0.12em 0.35em;
+  border-radius: 0.35em;
+}
+
+.reader-content :deep(pre) {
+  margin: 1.25rem 0;
+  padding: 1rem 1.1rem;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--reader-muted) 18%, transparent);
+  background: color-mix(in srgb, var(--reader-muted) 10%, transparent);
+  border-radius: 0.75rem;
+}
+
+.reader-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+}
+
 .reader-content :deep(img) {
+  display: block;
   max-width: 100%;
+  max-height: 60vh;
   height: auto;
+  margin: 1.5rem auto;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--reader-muted) 18%, transparent);
+  background: color-mix(in srgb, var(--reader-muted) 6%, transparent);
+}
+
+.reader-content :deep(figure) {
   margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reader-content :deep(figcaption) {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  color: var(--reader-muted);
 }
 
 .reader-content :deep(blockquote) {
@@ -236,6 +318,37 @@ function onSettingsUpdate(s: ReaderSettings) {
   border-left: 2px solid color-mix(in srgb, var(--reader-muted) 40%, transparent);
   padding-left: 1rem;
   margin: 1rem 0;
+}
+
+.reader-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.95em;
+}
+
+.reader-content :deep(caption) {
+  caption-side: bottom;
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  color: var(--reader-muted);
+}
+
+.reader-content :deep(th),
+.reader-content :deep(td) {
+  border: 1px solid color-mix(in srgb, var(--reader-muted) 18%, transparent);
+  padding: 0.6rem 0.7rem;
+  vertical-align: top;
+}
+
+.reader-content :deep(th) {
+  font-weight: 700;
+  background: color-mix(in srgb, var(--reader-muted) 10%, transparent);
+}
+
+.reader-content :deep(abbr[title]) {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {

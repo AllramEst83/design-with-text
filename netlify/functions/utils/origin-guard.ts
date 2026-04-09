@@ -13,8 +13,6 @@ async function loadDotenvOnce(): Promise<void> {
     const { config } = await import('dotenv')
     config({ path: resolve(process.cwd(), '.env') })
     config({ path: resolve(process.cwd(), 'netlify/.env') })
-    //log allowed origins
-    console.log('Allowed origins:', process.env.APPROVED_ORIGINS)
   } catch {
     console.error('Failed to load .env file')
   }
