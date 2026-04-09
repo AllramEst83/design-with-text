@@ -69,6 +69,17 @@ function openSettings() {
   isMobileSidebarOpen.value = false
 }
 
+function onArticleFetched(itemId: string, feedUrl: string, html: string) {
+  for (const feed of loadedFeeds.value) {
+    if (feed.url !== feedUrl) continue
+    const item = feed.items.find((i) => i.id === itemId)
+    if (item) {
+      item.fullArticleHtml = html
+      break
+    }
+  }
+}
+
 onMounted(() => {
   const persistedScale = window.localStorage.getItem(APP_FONT_SCALE_KEY)
   const parsedScale = Number(persistedScale)
@@ -205,7 +216,7 @@ onUnmounted(() => {
       </p>
     </footer>
 
-    <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" />
+    <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" @article-fetched="onArticleFetched" />
     <AppSettingsPanel v-model="isSettingsOpen" v-model:font-scale="appFontScale" />
 
     <!-- Mobile drawer -->

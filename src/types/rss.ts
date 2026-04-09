@@ -7,6 +7,7 @@ export interface FeedItem {
   contentHtml: string
   feedUrl: string
   feedTitle: string
+  fullArticleHtml?: string
 }
 
 export interface LoadedFeed {

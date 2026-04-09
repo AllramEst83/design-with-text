@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import type { ReaderSettings } from '@/composables/useReaderTheme'
 import { useReaderTheme } from '@/composables/useReaderTheme'
@@ -9,12 +9,26 @@ import type { FeedItem } from '@/types/rss'
 import { stripHtml } from '@/lib/text'
 import ReaderControls from './ReaderControls.vue'
 
+const SANITIZE_OPTS = {
+  ALLOWED_TAGS: [
+    'p', 'br', 'strong', 'em', 'b', 'i', 'a', 'ul', 'ol', 'li',
+    'blockquote', 'img', 'figure', 'figcaption',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'code', 'pre', 'hr', 'div', 'span',
+    'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'caption',
+    'sup', 'sub', 's', 'del', 'ins', 'mark', 'abbr', 'time',
+  ],
+  ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'loading', 'rel', 'target', 'colspan', 'rowspan', 'datetime'],
+  ADD_ATTR: ['loading'],
+}
+
 const props = defineProps<{
   item: FeedItem
 }>()
 
 const emit = defineEmits<{
   close: []
+  articleFetched: [itemId: string, feedUrl: string, html: string]
 }>()
 
 const { settings, readerStyleVars } = useReaderTheme()
@@ -22,6 +36,39 @@ const { settings, readerStyleVars } = useReaderTheme()
 const controlsOpen = ref(false)
 const proseInner = ref<HTMLElement | null>(null)
 const proseWidth = ref(640)
+const isLoadingArticle = ref(false)
+const fetchedArticleHtml = ref<string | null>(null)
+
+async function fetchFullArticle() {
+  const link = props.item.link?.trim()
+  if (!link || link === '#') return
+  if (props.item.fullArticleHtml) {
+    fetchedArticleHtml.value = props.item.fullArticleHtml
+    return
+  }
+
+  isLoadingArticle.value = true
+  try {
+    const res = await fetch(`/api/extract-article?url=${encodeURIComponent(link)}`)
+    if (res.status === 204 || !res.ok) return
+    const data = (await res.json()) as { content?: string }
+    if (data.content) {
+      fetchedArticleHtml.value = data.content
+      emit('articleFetched', props.item.id, props.item.feedUrl, data.content)
+    }
+  } catch {
+    // Silently fall back to excerpt
+  } finally {
+    isLoadingArticle.value = false
+  }
+}
+
+const displayContentHtml = computed(() =>
+  fetchedArticleHtml.value
+  || props.item.fullArticleHtml
+  || props.item.contentHtml
+  || props.item.excerpt,
+)
 
 let proseRo: ResizeObserver | null = null
 onMounted(() => {
@@ -32,46 +79,23 @@ onMounted(() => {
   void nextTick(() => {
     if (proseInner.value && proseRo) proseRo.observe(proseInner.value)
   })
+  void fetchFullArticle()
 })
 onUnmounted(() => proseRo?.disconnect())
 
+watch(() => props.item.id, () => {
+  fetchedArticleHtml.value = null
+  void fetchFullArticle()
+})
+
 const plainArticle = computed(
-  () => stripHtml(props.item.contentHtml || props.item.excerpt) || props.item.title,
+  () => stripHtml(displayContentHtml.value) || props.item.title,
 )
 
-/** Pretext height estimate — font string matches reader CSS via `useReaderTheme`. */
 const pretextHeight = useReaderPretextArticleHeight(plainArticle, proseWidth)
 
 const safeHtml = computed(() =>
-  DOMPurify.sanitize(props.item.contentHtml || props.item.excerpt, {
-    ALLOWED_TAGS: [
-      'p',
-      'br',
-      'strong',
-      'em',
-      'b',
-      'i',
-      'a',
-      'ul',
-      'ol',
-      'li',
-      'blockquote',
-      'img',
-      'figure',
-      'figcaption',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'code',
-      'pre',
-      'hr',
-      'div',
-      'span',
-    ],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'loading', 'rel', 'target'],
-    ADD_ATTR: ['loading'],
-  }),
+  DOMPurify.sanitize(displayContentHtml.value, SANITIZE_OPTS),
 )
 
 const originalHref = computed(() => {
@@ -147,7 +171,14 @@ function onSettingsUpdate(s: ReaderSettings) {
             color: 'var(--reader-fg)',
           }"
         >
+          <div v-if="isLoadingArticle" class="flex flex-col items-center justify-center py-24">
+            <div class="article-loading-pulse mb-4 h-1 w-24 bg-[var(--reader-muted)]" />
+            <p class="font-label text-[11px] uppercase tracking-widest text-[var(--reader-muted)]">
+              Extracting article&hellip;
+            </p>
+          </div>
           <div
+            v-else
             ref="proseInner"
             class="reader-prose-inner mx-auto"
             :style="{
@@ -211,5 +242,19 @@ function onSettingsUpdate(s: ReaderSettings) {
   .reader-prose {
     scroll-behavior: auto;
   }
+  .article-loading-pulse {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.15; transform: scaleX(0.6); }
+  50% { opacity: 0.5; transform: scaleX(1); }
+}
+
+.article-loading-pulse {
+  animation: loading-pulse 1.8s ease-in-out infinite;
+  transform-origin: center;
 }
 </style>

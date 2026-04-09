@@ -9,3 +9,8 @@
   from = "/api/rss"
   to = "/.netlify/functions/rss"
   status = 200
+
+[[redirects]]
+  from = "/api/extract-article"
+  to = "/.netlify/functions/extract-article"
+  status = 200
