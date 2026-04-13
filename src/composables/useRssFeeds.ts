@@ -80,6 +80,7 @@ export function useRssFeeds() {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const hasHydrated = ref(false)
+  const isPersistencePaused = ref(false)
 
   const allItems = computed<FeedItem[]>(() => {
     const out: FeedItem[] = []
@@ -113,11 +114,19 @@ export function useRssFeeds() {
   })()
 
   let saveTimer: number | null = null
+
+  function clearPendingSave() {
+    if (!saveTimer) return
+    window.clearTimeout(saveTimer)
+    saveTimer = null
+  }
+
   watch(
     loadedFeeds,
     () => {
       if (!hasHydrated.value) return
-      if (saveTimer) window.clearTimeout(saveTimer)
+      if (isPersistencePaused.value) return
+      clearPendingSave()
       saveTimer = window.setTimeout(() => {
         void saveRssState(loadedFeeds.value)
       }, 250)
@@ -155,6 +164,8 @@ export function useRssFeeds() {
 
     loading.value = true
     error.value = null
+    isPersistencePaused.value = true
+    clearPendingSave()
 
     try {
       await clearRssState()
@@ -195,6 +206,7 @@ export function useRssFeeds() {
       loadedFeeds.value = []
       error.value = e instanceof Error ? e.message : 'Could not refresh feeds'
     } finally {
+      isPersistencePaused.value = false
       loading.value = false
     }
   }
