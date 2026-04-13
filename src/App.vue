@@ -80,6 +80,17 @@ function onArticleFetched(itemId: string, feedUrl: string, html: string) {
   }
 }
 
+function onArticleViewed(itemId: string, feedUrl: string, status: 'success' | 'failed') {
+  for (const feed of loadedFeeds.value) {
+    if (feed.url !== feedUrl) continue
+    const item = feed.items.find((i) => i.id === itemId)
+    if (!item) continue
+    item.viewedAtMs = Date.now()
+    item.extractionStatus = status
+    break
+  }
+}
+
 onMounted(() => {
   const persistedScale = window.localStorage.getItem(APP_FONT_SCALE_KEY)
   const parsedScale = Number(persistedScale)
@@ -216,7 +227,13 @@ onUnmounted(() => {
       </p>
     </footer>
 
-    <ReaderMode v-if="selected && readerOpen" :item="selected" @close="closeReader" @article-fetched="onArticleFetched" />
+    <ReaderMode
+      v-if="selected && readerOpen"
+      :item="selected"
+      @close="closeReader"
+      @article-fetched="onArticleFetched"
+      @article-viewed="onArticleViewed"
+    />
     <AppSettingsPanel v-model="isSettingsOpen" v-model:font-scale="appFontScale" />
 
     <!-- Mobile drawer -->

@@ -8,6 +8,8 @@ export interface FeedItem {
   feedUrl: string
   feedTitle: string
   fullArticleHtml?: string
+  viewedAtMs?: number
+  extractionStatus?: 'success' | 'failed'
 }
 
 export interface LoadedFeed {

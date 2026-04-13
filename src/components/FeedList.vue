@@ -13,6 +13,11 @@ function truncateText(text: string | undefined, maxChars: number): string {
   return `${text.slice(0, maxChars)}…`
 }
 
+function viewedIconName(item: FeedItem | undefined): string | null {
+  if (!item?.viewedAtMs) return null
+  return 'check_circle'
+}
+
 const props = withDefaults(
   defineProps<{
     items: FeedItem[]
@@ -103,7 +108,17 @@ const measureRow: VNodeRef = (node) => {
               @keydown.enter="emit('select', items[v.index]!)"
             >
               <p class="font-label text-[0.625rem] uppercase tracking-wider text-secondary">
-                {{ items[v.index]?.feedTitle }} · {{ formatPubDate(items[v.index]?.pubDate) }}
+                <span class="inline-flex items-center gap-1">
+                  <span>{{ items[v.index]?.feedTitle }} · {{ formatPubDate(items[v.index]?.pubDate) }}</span>
+                  <span
+                    v-if="viewedIconName(items[v.index])"
+                    class="material-symbols-outlined text-[14px] text-primary"
+                    aria-label="Viewed"
+                    title="Viewed"
+                  >
+                    {{ viewedIconName(items[v.index]) }}
+                  </span>
+                </span>
               </p>
               <h3 class="font-headline mt-2 text-[1.125rem] font-bold leading-snug text-on-surface">
                 {{ items[v.index]?.title }}

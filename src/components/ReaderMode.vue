@@ -30,6 +30,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   close: []
   articleFetched: [itemId: string, feedUrl: string, html: string]
+  articleViewed: [itemId: string, feedUrl: string, status: 'success' | 'failed']
 }>()
 
 const { settings, readerStyleVars } = useReaderTheme()
@@ -42,23 +43,34 @@ const fetchedArticleHtml = ref<string | null>(null)
 
 async function fetchFullArticle() {
   const link = props.item.link?.trim()
-  if (!link || link === '#') return
+  if (!link || link === '#') {
+    emit('articleViewed', props.item.id, props.item.feedUrl, 'failed')
+    return
+  }
   if (props.item.fullArticleHtml) {
     fetchedArticleHtml.value = props.item.fullArticleHtml
+    emit('articleViewed', props.item.id, props.item.feedUrl, 'success')
     return
   }
 
   isLoadingArticle.value = true
   try {
     const res = await fetch(`/api/extract-article?url=${encodeURIComponent(link)}`)
-    if (res.status === 204 || !res.ok) return
+    if (res.status === 204 || !res.ok) {
+      emit('articleViewed', props.item.id, props.item.feedUrl, 'failed')
+      return
+    }
     const data = (await res.json()) as { content?: string }
     if (data.content) {
       fetchedArticleHtml.value = data.content
       emit('articleFetched', props.item.id, props.item.feedUrl, data.content)
+      emit('articleViewed', props.item.id, props.item.feedUrl, 'success')
+      return
     }
+    emit('articleViewed', props.item.id, props.item.feedUrl, 'failed')
   } catch {
     // Silently fall back to excerpt
+    emit('articleViewed', props.item.id, props.item.feedUrl, 'failed')
   } finally {
     isLoadingArticle.value = false
   }
